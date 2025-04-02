@@ -23,7 +23,7 @@ userController.post("/post", async (req, res) => {
     // // req.body 是入参
     // res.send(Result.success(await req.body))
     console.log('req.body===>', req.body)
-    res.send(Result.success(await userService.getUserListByParams(req.body)))
+    res.send(Result.success(await userService.getUserListByParams(req.body), '1234'))
 })
 
 // 解密微信小程序数据

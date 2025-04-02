@@ -1,4 +1,4 @@
-/* 此文件用于启用 */
+/* 此文件用于启用，启动方式为 nodemon app */
 const app = require("./src")
 const port = 9000
 

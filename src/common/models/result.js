@@ -1,14 +1,15 @@
 /* 封装返回处理好的数据 */
 class Result {
     // 定义一个构造函数
-    constructor (code, message, data) {
+    constructor (code, message, data, token) {
         this.code = code
         this.message = message
         this.data = data
+        this.token = token
     }
     // 成功
-    static success (data) {
-        return new Result(200, "success", data)
+    static success (data, token) {
+        return new Result(200, "success", data, token)
     }
     // 异常
     static error (message) {
