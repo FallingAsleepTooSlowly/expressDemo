@@ -9,6 +9,10 @@ class userService {
     async getUserListByParams (condition) {
         return await userDao.getUserListByParams(condition)
     }
+
+    async login (condition) {
+        return await userDao.login(condition)
+    }
 }
 
 module.exports = new userService()

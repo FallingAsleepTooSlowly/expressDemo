@@ -1,5 +1,7 @@
 const userController = require("express").Router()
 const userService = require("../service/userService")
+// token 生成和校验
+const jwt = require("../common/utils/jwt")
 // const userclass = require("../class/userClass")
 const Result = require("../common/models/result")
 const WXBizDataCrypt = require("../common/utils/WXBizDataCrypt")
@@ -9,6 +11,45 @@ const axios = require("axios")
 axios.defaults.timeout = 10000      // 设置超时时间为10秒
 axios.defaults.headers.post['Content-Type'] = 'application/json'        // 设置请求头为 json 格式
 
+// 每个对路由 '/user' 的请求都会经过这里
+userController.all('/user/*', (req, res, next) => {
+    console.log('is cross user!!!!!!')
+    next()
+})
+
+// 用户登陆接口
+userController.post("/user/login", async (req, res) => {
+    var info = await userService.login(req.body)
+    if (info) {
+        // 生成 token
+        let jwtToken = jwt.sign({name: info.name, password: info.password})
+        console.log("jwtToken====>", jwtToken)
+        res.send(Result.success({
+            code: 0,
+            data: info,
+            token: jwtToken
+        }))
+    } else {
+        res.send(Result.success({
+            code: 1,
+            data: info
+        }))
+    }
+})
+
+// 校验 token 接口
+// 在回调函数前加入校验 token 的方法
+userController.get("/user/checkToken", jwt.verify(), async (req, res) => {
+    // console.log('ctx===>', ctx)
+    res.send(Result.success({
+        code: 0,
+        data: '校验接口'
+    }))
+})
+
+
+
+/* -------------------- 接口示例 ------------------ */
 // get 接口例子
 userController.get("/get", async (req, res) => {
     var info = await userService.getUserList()
@@ -22,8 +63,8 @@ userController.get("/get", async (req, res) => {
 userController.post("/post", async (req, res) => {
     // // req.body 是入参
     // res.send(Result.success(await req.body))
-    console.log('req.body===>', req.body)
-    res.send(Result.success(await userService.getUserListByParams(req.body), '1234'))
+    var info = await userService.getUserListByParams(req.body)
+    res.send(Result.success(info, '1234'))
 })
 
 // 解密微信小程序数据

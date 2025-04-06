@@ -9,7 +9,7 @@ module.exports = {
     MySQLConfig: {
         host: "localhost",
         user: "root",
-        password: "123456",
+        password: "310627",
         database: "gh_demo",
         // 是否等待所有连接都被处理。如果设置为true，则当连接池达到其最大容量时，新请求将被阻塞，直到有可用连接
         waitForConnections: true, 
