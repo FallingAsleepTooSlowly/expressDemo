@@ -23,7 +23,6 @@ userController.post("/user/login", async (req, res) => {
     if (info) {
         // 生成 token
         let jwtToken = jwt.sign({name: info.name, password: info.password})
-        console.log("jwtToken====>", jwtToken)
         res.send(Result.success({
             code: 0,
             data: info,
@@ -32,7 +31,7 @@ userController.post("/user/login", async (req, res) => {
     } else {
         res.send(Result.success({
             code: 1,
-            data: info
+            message: '用户名或密码错误',
         }))
     }
 })
@@ -40,7 +39,6 @@ userController.post("/user/login", async (req, res) => {
 // 校验 token 接口
 // 在回调函数前加入校验 token 的方法
 userController.get("/user/checkToken", jwt.verify(), async (req, res) => {
-    // console.log('ctx===>', ctx)
     res.send(Result.success({
         code: 0,
         data: '校验接口'

@@ -6,14 +6,15 @@ const protoDB = require("../common/utils/protoDbConnet")
 
 class UserDao {
     async login (condition) {
-        let sql = "select * from user where name = ?"
+        let sql = "select * from user where name = ? AND password = ?"
         const data = await protoDB.execute(
             sql,
-            [condition.name],
+            [condition.name, condition.password],
             function(err, results, fields) {
                 return
             }
         )
+        console.log('data[0]====>', data[0])
         return data[0][0]
     }
 

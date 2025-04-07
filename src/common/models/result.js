@@ -9,7 +9,12 @@ class Result {
     }
     // 成功
     static success (info) {
-        return new Result(info.code || info.code === 0 ? info.code : 200, "success", info.data, info.token)
+        return new Result(
+            info.code || info.code === 0 ? info.code : 200,
+            info.message ? info.message : "success",
+            info.data,
+            info.token
+        )
     }
     // 异常
     static error (message) {

@@ -6,7 +6,7 @@ const Result = require("../models/result")
 // sign 用于生成 token，666 用于加密的私钥可以自行定义
 function sign(option) {
     // 参数：sign(<用于加密的信息>, <加密口令（解密时需要）>, <加密的参数>)
-    return jwt.sign(option, '666', {
+    return jwt.sign(option, 'danbao', {
         // 过期时间，当前设定过期时间在60秒之后
         expiresIn: 60
     })
@@ -14,16 +14,13 @@ function sign(option) {
 
 // token 校验
 let verify = (isAdmin) => (req, res, next) => {
-    console.log('ctx.req====>', req)
-    console.log('ctx.res====>', res)
     // 获取到前端传递过来的 token
     let token = req.headers.token
     console.log('token====>', token)
     if (token) {
         // 参数：verify()
-        jwt.verify(token, '666', function(err, decoded) {
+        jwt.verify(token, 'danbao', function(err, decoded) {
             // 判断 token 是否失效
-            console.log('err====>', err)
             if (err) {
                 res.send(Result.error('token失效'))
             } else {
@@ -47,10 +44,7 @@ let verify = (isAdmin) => (req, res, next) => {
             }
         })
     } else {
-        res.body = {
-            status: 401,
-            message: '请提供token'
-        }
+        res.send(Result.error('请提供token'))
     }
 }
 
