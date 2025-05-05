@@ -1,4 +1,5 @@
 const userDao = require("../dao/userDao")
+const userInfoDto = require("../dto/userInfo.dto")
 
 class userService {
     
@@ -10,8 +11,16 @@ class userService {
         return await userDao.getUserListByParams(condition)
     }
 
+    // 登陆
     async login (condition) {
-        return await userDao.login(condition)
+        let info = await userDao.login(condition)
+        console.log('login info=====>', info)
+        info.roles = ['admin']
+        info.portrait = 'xxxxxx'
+        // let resInfo = new userInfoDto(info)
+        let resInfo = userInfoDto.UserInfoDto.fromDataBase(info)
+        console.log('resInfo=====>', resInfo)
+        return resInfo
     }
 }
 

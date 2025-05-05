@@ -16,7 +16,7 @@ function sign(option) {
 let verify = (isAdmin) => (req, res, next) => {
     // 获取到前端传递过来的 token
     let token = req.headers.token
-    console.log('token====>', token)
+    // console.log('token====>', token)
     if (token) {
         // 参数：verify()
         jwt.verify(token, 'danbao', function(err, decoded) {
@@ -39,7 +39,7 @@ let verify = (isAdmin) => (req, res, next) => {
                 // } else {
                 //     next()
                 // }
-                console.log('decoded====>', decoded)
+                // console.log('decoded====>', decoded)
                 next()
             }
         })

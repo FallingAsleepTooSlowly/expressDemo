@@ -7,14 +7,12 @@ const protoDB = require("../common/utils/protoDbConnet")
 class UserDao {
     async login (condition) {
         let sql = "select * from user where name = ? AND password = ?"
+        // mysql2 的 execute 参数分别为 execute(<SQL语句>, <参数数组（用 ? 当参数的占位符）>, <SQL语句执行后的回调函数>)
         const data = await protoDB.execute(
             sql,
             [condition.name, condition.password],
-            function(err, results, fields) {
-                return
-            }
+            function(err, results, fields) { return }
         )
-        console.log('data[0]====>', data[0])
         return data[0][0]
     }
 
@@ -36,7 +34,6 @@ class UserDao {
                 return
             }
         )
-        console.log('post data====>', data)
         return data[0][0]
     }
 

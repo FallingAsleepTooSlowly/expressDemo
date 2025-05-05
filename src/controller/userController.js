@@ -13,7 +13,7 @@ axios.defaults.headers.post['Content-Type'] = 'application/json'        // 设�
 
 // 每个对路由 '/user' 的请求都会经过这里
 userController.all('/user/*', (req, res, next) => {
-    console.log('is cross user!!!!!!')
+    // console.log('is cross user!!!!!!')
     next()
 })
 
