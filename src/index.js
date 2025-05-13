@@ -3,6 +3,31 @@ const express = require("express")
 const app = require("express")()
 const cors = require("cors")  // 引入cors模块
 
+// ------------------ 验证码相关
+// svg-captcha 验证码插件依赖 session 存储验证码信息，session 的认证机制依赖 cookie
+const session = require("express-session")
+const cookieParser = require("cookie-parser")
+
+app.use(cookieParser())
+// 定义 cookie 解析器，位置需写在路由分配前
+app.use(session({
+    // 对 session id 相关的 cookie 进行签名
+    secret: 'ganhuan',
+    // 每次请求是否都重新设置 session cookie
+    resave: true,
+    // 是否保存未初始化的会话
+    saveUninitialized: false,
+    cookie: {
+        // 设置 session 的有效时间，单位毫秒
+        maxAge: 1000 * 60 * 5,
+    },
+    // 是否回滚
+    rolling: true,
+    // key 名，默认为 connect.id
+    name: "session"
+}))
+// ------------------
+
 app.use(cors())  // 注入cors模块解决跨域
 
 /* 
