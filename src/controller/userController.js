@@ -5,8 +5,10 @@ const jwt = require("../common/utils/jwt")
 // const userclass = require("../class/userClass")
 const Result = require("../common/models/result")
 const WXBizDataCrypt = require("../common/utils/WXBizDataCrypt")
+const svgCaptcha = require("svg-captcha")
 
 const axios = require("axios")
+const code = require("jade/lib/nodes/code")
 // 单独配置一些默认参数
 axios.defaults.timeout = 10000      // 设置超时时间为10秒
 axios.defaults.headers.post['Content-Type'] = 'application/json'        // 设置请求头为 json 格式
@@ -45,6 +47,29 @@ userController.get("/user/checkToken", jwt.verify(), async (req, res) => {
     }))
 })
 
+// 获取验证码
+userController.get("/user/getSvg", async (req, res) => {
+    const cap = svgCaptcha.create({
+        // 是否翻转颜色
+        inverse: false,
+        // 字体大小
+        fontSize: 36,
+        // 噪声线条数
+        noise: 3,
+        // 宽度
+        width: 80,
+        // 高度
+        height: 30
+    })
+    // session 存储验证码数值
+    req.session.captcha = cap.text
+    // 设置响应的类型
+    res.type('svg')
+    res.send(Result.success({
+        code: 0,
+        data: cap.data
+    }))
+})
 
 
 /* -------------------- 接口示例 ------------------ */
