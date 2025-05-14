@@ -6,9 +6,9 @@ const jwt = require("../common/utils/jwt")
 const Result = require("../common/models/result")
 const WXBizDataCrypt = require("../common/utils/WXBizDataCrypt")
 const svgCaptcha = require("svg-captcha")
-
+const md5 = require("md5-node")
 const axios = require("axios")
-const code = require("jade/lib/nodes/code")
+
 // 单独配置一些默认参数
 axios.defaults.timeout = 10000      // 设置超时时间为10秒
 axios.defaults.headers.post['Content-Type'] = 'application/json'        // 设置请求头为 json 格式
@@ -21,21 +21,24 @@ userController.all('/user/*', (req, res, next) => {
 
 // 用户登陆接口
 userController.post("/user/login", async (req, res) => {
-    var info = await userService.login(req.body)
-    if (info) {
-        // 生成 token
-        let jwtToken = jwt.sign({name: info.name, password: info.password})
-        res.send(Result.success({
-            code: 0,
-            data: info,
-            token: jwtToken
-        }))
-    } else {
-        res.send(Result.success({
-            code: 1,
-            message: '用户名或密码错误',
-        }))
-    }
+    console.log('/user/login====>', req.session)
+    var apiRes = await userService.login(req.body, req)
+    res.send(apiRes)
+    // var info = await userService.login(req.body)
+    // if (info) {
+    //     // 生成 token
+    //     let jwtToken = jwt.sign({name: info.name, password: info.password})
+    //     res.send(Result.success({
+    //         code: 0,
+    //         data: info,
+    //         token: jwtToken
+    //     }))
+    // } else {
+    //     res.send(Result.success({
+    //         code: 1,
+    //         message: '用户名或密码错误',
+    //     }))
+    // }
 })
 
 // 校验 token 接口
@@ -57,12 +60,17 @@ userController.get("/user/getSvg", async (req, res) => {
         // 噪声线条数
         noise: 3,
         // 宽度
-        width: 80,
+        width: 120,
         // 高度
-        height: 30
+        height: 40,
+        // 是否有背景色
+        // color: false,
+        // 忽略较难分辨的相似字符
+        ignoreChars: 'o01il'
     })
     // session 存储验证码数值
     req.session.captcha = cap.text
+    console.log('????===>', req.session)
     // 设置响应的类型
     res.type('svg')
     res.send(Result.success({
