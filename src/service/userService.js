@@ -18,6 +18,7 @@ class userService {
     async login (condition, req) {
         // 校验数据。。。。。。
         // 校验验证码
+        console.log('conditioncondition====>', condition)
         const captcha = condition.captcha.toLowerCase()
         console.log('captchacaptcha=====>', captcha)
         console.log('req.session.captchareq.session.captcha====>', req.session.captcha)

@@ -21,7 +21,6 @@ userController.all('/user/*', (req, res, next) => {
 
 // 用户登陆接口
 userController.post("/user/login", async (req, res) => {
-    console.log('/user/login====>', req.session)
     var apiRes = await userService.login(req.body, req)
     res.send(apiRes)
     // var info = await userService.login(req.body)

@@ -28,7 +28,13 @@ app.use(session({
 }))
 // ------------------
 
-app.use(cors())  // 注入cors模块解决跨域
+// 配置 cors（允许跨域携带凭证）
+app.use(cors({
+    // 你的前端地址
+    origin: 'http://localhost:9999',
+    // 是否允许携带 cookie（在此处和前端配置跨域允许请求中携带 cookie 后就能传输 session）
+    credentials: true   
+}))
 
 /* 
 *   express 开发初期，目的在于轻量级，从而舍弃了部分功能，而解析POST请求便被舍弃了，故而在4.x以前，一般使用body-parser来解析
