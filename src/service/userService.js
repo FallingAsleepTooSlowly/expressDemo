@@ -18,11 +18,17 @@ class userService {
     async login (condition, req) {
         // 校验数据。。。。。。
         // 校验验证码
-        console.log('conditioncondition====>', condition)
-        const captcha = condition.captcha.toLowerCase()
+        // console.log('conditioncondition====>', condition)
+        const captcha = condition.captcha
         console.log('captchacaptcha=====>', captcha)
         console.log('req.session.captchareq.session.captcha====>', req.session.captcha)
-        if (captcha !== req.session.captcha) {
+        if (!captcha) {
+            return Result.success({
+                code: 1,
+                message: '请输入验证码',
+            })
+        }
+        if (captcha.toLowerCase() !== req.session.captcha) {
             return Result.success({
                 code: 1,
                 message: '验证码错误',
