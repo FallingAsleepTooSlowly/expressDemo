@@ -6,7 +6,8 @@ const protoDB = require("../common/utils/protoDbConnet")
 
 class UserDao {
     async login (condition) {
-        let sql = "select * from user where name = ? AND password = ?"
+        // let sql = "select * from user where name = ? AND password = ?"
+        let sql = " SELECT u.*, JSON_ARRAYAGG(r.role) AS roles FROM user u JOIN roles r ON u.openid = r.user_id WHERE u.name = ? AND password = ? GROUP BY u.openid;"
         // mysql2 的 execute 参数分别为 execute(<SQL语句>, <参数数组（用 ? 当参数的占位符）>, <SQL语句执行后的回调函数>)
         const data = await protoDB.execute(
             sql,
