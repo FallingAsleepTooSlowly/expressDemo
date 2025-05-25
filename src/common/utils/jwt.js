@@ -8,7 +8,7 @@ function sign(option) {
     // 参数：sign(<用于加密的信息>, <加密口令（解密时需要）>, <加密的参数>)
     return jwt.sign(option, 'danbao', {
         // 过期时间，当前设定过期时间在600秒之后
-        expiresIn: 600
+        expiresIn: 1200
     })
 }
 

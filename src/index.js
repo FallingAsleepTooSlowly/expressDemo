@@ -19,7 +19,7 @@ app.use(session({
     saveUninitialized: false,
     cookie: {
         // 设置 session 的有效时间，单位毫秒
-        maxAge: 1000 * 60 * 5,
+        maxAge: 1000 * 60,
     },
     // 是否回滚
     rolling: true,
