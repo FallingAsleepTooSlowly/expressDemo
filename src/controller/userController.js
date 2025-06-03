@@ -4,8 +4,12 @@ const userService = require("../service/userService")
 const jwt = require("../common/utils/jwt")
 // const userclass = require("../class/userClass")
 const Result = require("../common/models/result")
-const WXBizDataCrypt = require("../common/utils/WXBizDataCrypt")
+// 生成验证码
 const svgCaptcha = require("svg-captcha")
+// multer 用于将本地文件/图片上传到服务器指定目录
+const multer = require("multer")
+// 微信小程序数据解密方法（未使用或是已舍弃）
+const WXBizDataCrypt = require("../common/utils/WXBizDataCrypt")
 const md5 = require("md5-node")
 const axios = require("axios")
 
@@ -38,6 +42,11 @@ userController.post("/user/login", async (req, res) => {
     //         message: '用户名或密码错误',
     //     }))
     // }
+})
+
+// 上传头像接口
+userController.post("/user/uploadPortrait", async (req, res) => {
+
 })
 
 // 校验 token 接口
