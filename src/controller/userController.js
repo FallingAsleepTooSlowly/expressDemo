@@ -10,6 +10,7 @@ const svgCaptcha = require("svg-captcha")
 const multer = require("multer")
 // 微信小程序数据解密方法（未使用或是已舍弃）
 const WXBizDataCrypt = require("../common/utils/WXBizDataCrypt")
+const { uploadFile } = require("../common/utils/util")
 const md5 = require("md5-node")
 const axios = require("axios")
 
@@ -45,8 +46,12 @@ userController.post("/user/login", async (req, res) => {
 })
 
 // 上传头像接口
-userController.post("/user/uploadPortrait", async (req, res) => {
-
+userController.post("/user/uploadPortrait", uploadFile, async (req, res) => {
+    console.log('uploadPortrait===>', req.body)
+    res.send(Result.success({
+        code: 0,
+        message: '上传成功！'
+    }))
 })
 
 // 校验 token 接口
