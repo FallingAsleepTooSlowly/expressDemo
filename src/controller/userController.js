@@ -26,32 +26,14 @@ userController.all('/user/*', (req, res, next) => {
 
 // 用户登陆接口
 userController.post("/user/login", async (req, res) => {
-    var apiRes = await userService.login(req.body, req)
+    let apiRes = await userService.login(req.body, req)
     res.send(apiRes)
-    // var info = await userService.login(req.body)
-    // if (info) {
-    //     // 生成 token
-    //     let jwtToken = jwt.sign({name: info.name, password: info.password})
-    //     res.send(Result.success({
-    //         code: 0,
-    //         data: info,
-    //         token: jwtToken
-    //     }))
-    // } else {
-    //     res.send(Result.success({
-    //         code: 1,
-    //         message: '用户名或密码错误',
-    //     }))
-    // }
 })
 
 // 上传头像接口
 userController.post("/user/uploadPortrait", uploadFile, async (req, res) => {
-    console.log('uploadPortrait===>', req.body)
-    res.send(Result.success({
-        code: 0,
-        message: '上传成功！'
-    }))
+    let apiRes = await userService.uploadPortrait(req.body, req)
+    res.send(apiRes)
 })
 
 // 校验 token 接口

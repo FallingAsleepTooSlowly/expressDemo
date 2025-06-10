@@ -64,6 +64,18 @@ class userService {
         }
         return apiRes
     }
+
+    // 上传头像
+    async uploadPortrait (condition, req) {
+        console.log('file?====>', condition.file)
+        // 返回的数据
+        let apiRes = null
+        apiRes = Result.success({
+            code: 0,
+            message: '上传成功！'
+        })
+        return apiRes
+    }
 }
 
 module.exports = new userService()
