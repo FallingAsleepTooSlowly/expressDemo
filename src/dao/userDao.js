@@ -5,6 +5,7 @@ const protoDB = require("../common/utils/protoDbConnet")
 // const User = require("../class/crossUserClass")
 
 class UserDao {
+    // 登录
     async login (condition) {
         // let sql = "select * from user where name = ? AND password = ?"
         let sql = " SELECT u.*, JSON_ARRAYAGG(r.role) AS roles FROM user u JOIN roles r ON u.openid = r.user_id WHERE u.name = ? AND password = ? GROUP BY u.openid;"
@@ -14,7 +15,31 @@ class UserDao {
             [condition.name, condition.password],
             function(err, results, fields) { return }
         )
+        // 使用 data[0] 的原因，请查阅 mysql2 文档
         return data[0][0]
+    }
+
+    // 获取最新用户信息
+    async getNewUserInfo (condition) {
+        let sql = "SELECT * FROM user WHERE name = ?"
+        const data = await protoDB.execute(
+            sql,
+            [condition.name],
+            function(err, results, fields) { return }
+        )
+        return data[0][0]
+    }
+
+    // 上传头像
+    async uploadPortrait (condition) {
+        console.log('???===>', condition)
+        let sql = "UPDATE user SET portrait = ? WHERE name = ?"
+        const data = await protoDB.execute(
+            sql,
+            [condition.file, condition.name],
+            function(err, results, fields) { return }
+        )
+        return data[0]
     }
 
     // 查询所有用户

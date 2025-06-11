@@ -1,5 +1,5 @@
 const userDao = require("../dao/userDao")
-const userInfoDto = require("../dto/userInfo.dto")
+const { UserInfoDto } = require("../dto/userInfo.dto")
 // token 生成和校验
 const jwt = require("../common/utils/jwt")
 const Result = require("../common/models/result")
@@ -47,8 +47,7 @@ class userService {
         // ------------ 根据查询的数据返回
         if (info) {
             // let userInfo = new userInfoDto(info)
-            userInfo = userInfoDto.UserInfoDto.fromDataBase(info)
-            console.log('userInfo=====>', userInfo)
+            userInfo = UserInfoDto.fromDataBase(info)
             // 生成 token
             let jwtToken = jwt.sign({name: userInfo.name, openid: userInfo.openid})
             apiRes = Result.success({
@@ -59,22 +58,45 @@ class userService {
         } else {
             apiRes = Result.success({
                 code: 1,
-                message: '用户名或密码错误',
+                message: '用户名或密码错误'
             })
         }
         return apiRes
     }
 
+    // 获取最新用户信息
+    async getNewUserInfo(condition, req) {
+        // 查询到的数据
+        let info = await userDao.getNewUserInfo(condition)
+        if (info) {
+            return Result.success({
+                code: 1,
+                data: UserInfoDto.fromDataBase(info)
+            })
+        } else {
+            return Result.success({
+                code: 1,
+                message: '用户信息查询失败'
+            })
+        }
+    }
+
     // 上传头像
     async uploadPortrait (condition, req) {
         console.log('file?====>', condition.file)
-        // 返回的数据
-        let apiRes = null
-        apiRes = Result.success({
-            code: 0,
-            message: '上传成功！'
-        })
-        return apiRes
+        let info = await userDao.uploadPortrait(condition)
+        console.log('uploadPortrait??=====>', info)
+        if (info) {
+            return Result.success({
+                code: 0,
+                message: '上传成功！'
+            })
+        } else {
+            return Result.success({
+                code: 0,
+                message: '上传失败！'
+            })
+        }
     }
 }
 
