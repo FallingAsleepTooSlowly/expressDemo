@@ -33,13 +33,18 @@ class UserDao {
     // 上传头像
     async uploadPortrait (condition) {
         console.log('???===>', condition)
-        let sql = "UPDATE user SET portrait = ? WHERE name = ?"
-        const data = await protoDB.execute(
-            sql,
-            [condition.file, condition.name],
-            function(err, results, fields) { return }
-        )
-        return data[0]
+        throw new Error('程序发生了未知错误');
+        try {
+            let sql = "UPDATE user SET portrait = ? WHERE name = ?"
+            const data = await protoDB.execute(
+                sql,
+                [condition.file, condition.name],
+                function(err, results, fields) { return }
+            )
+            return data[0]
+        } catch (err) {
+            next(err)
+        }
     }
 
     // 查询所有用户
@@ -97,7 +102,7 @@ module.exports = new UserDao()
 //         //     return _.pluck(rows, 'name');
 //         // })
 //         // .then(function(names) {
-//         //     return knex.select('id')
+//         //    return knex.select('id')
 //         //     .from('nicknames')
 //         //     .whereIn('nickname', names);
 //         // })

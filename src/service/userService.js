@@ -70,7 +70,7 @@ class userService {
         let info = await userDao.getNewUserInfo(condition)
         if (info) {
             return Result.success({
-                code: 1,
+                code: 0,
                 data: UserInfoDto.fromDataBase(info)
             })
         } else {
