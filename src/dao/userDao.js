@@ -33,18 +33,14 @@ class UserDao {
     // 上传头像
     async uploadPortrait (condition) {
         console.log('???===>', condition)
-        throw new Error('程序发生了未知错误');
-        try {
-            let sql = "UPDATE user SET portrait = ? WHERE name = ?"
-            const data = await protoDB.execute(
-                sql,
-                [condition.file, condition.name],
-                function(err, results, fields) { return }
-            )
-            return data[0]
-        } catch (err) {
-            next(err)
-        }
+        // throw new Error('程序发生了未知错误');
+        let sql = "UPDATE user SET portrait = ? WHERE name = ?"
+        const data = await protoDB.execute(
+            sql,
+            [condition.file, condition.name],
+            function(err, results, fields) { return }
+        )
+        return data[0]
     }
 
     // 查询所有用户

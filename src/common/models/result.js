@@ -9,7 +9,7 @@ class Result {
 
         // 使用 lodash 的 pick 函数筛选想要的字段，再用 Object.assign 将对象中所有可枚举的自有属性复制出来
         var _ = require('lodash')
-        const needFields = ['code', 'message', 'data', 'token']
+        const needFields = ['code', 'message', 'data', 'token', 'reason']
         Object.assign(this, _.pick(data, needFields))
     }
     // 成功
@@ -22,11 +22,12 @@ class Result {
         })
     }
     // 异常
-    static error (message) {
+    static error (info) {
         return new Result({
             code: 500,
-            message: message,
-            data: null
+            message: info.message,
+            data: null,
+            reason: info.reason
         })
     }
 

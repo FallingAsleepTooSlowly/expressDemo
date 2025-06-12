@@ -2,6 +2,7 @@
 const express = require("express")
 const app = require("express")()
 const cors = require("cors")  // 引入cors模块
+const Result = require("./common/models/result")
 
 // ------------------ 验证码相关
 // svg-captcha 验证码插件依赖 session 存储验证码信息，session 的认证机制依赖 cookie
@@ -52,11 +53,18 @@ app.use(express.json(), express.urlencoded({ extended: true }))   // 解析 post
 // 使用日志中间件 morgan 记录请求日志，注意，日志中间件的导入需要在路由前，express 的设计是一层层往下走的，中间件的使用顺序在此比较重要
 app.use(require("./common/utils/morgan"))
 
-// app.get('/', (req, res) => {
-//     res.send('222222')
-// })
-
 // 路由分离
 app.use("/", require("./controller"))
+
+
+// 全局错误处理中间件（需将错误抛出才捕获的到）
+app.use((err, req, res, next) => {
+    console.error("捕获到错误:", err.stack);
+    //   res.status(500).send("服务器内部错误");
+    res.send(Result.error({
+        message: '服务器内部错误',
+        reason: err.stack
+    }))
+})
 
 module.exports = app

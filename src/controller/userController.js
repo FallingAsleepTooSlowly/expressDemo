@@ -26,20 +26,32 @@ userController.all('/user/*', (req, res, next) => {
 
 // 用户登陆接口
 userController.post("/user/login", async (req, res) => {
-    let apiRes = await userService.login(req.body, req)
-    res.send(apiRes)
+    try {
+        let apiRes = await userService.login(req.body, req)
+        res.send(apiRes)
+    } catch (err) {
+        next(err)
+    }
 })
 
 // 获取最新用户信息
-userController.post("/user/getNewUserInfo", async (req, res) => {
-    let apiRes = await userService.getNewUserInfo(req.body, req)
-    res.send(apiRes)
+userController.post("/user/getNewUserInfo", async (req, res, next) => {
+    try {
+        let apiRes = await userService.getNewUserInfo(req.body, req)
+        res.send(apiRes)
+    } catch (err) {
+        next(err)
+    }
 })
 
 // 上传头像接口
-userController.post("/user/uploadPortrait", uploadFile, async (req, res) => {
-    let apiRes = await userService.uploadPortrait(req.body, req)
-    res.send(apiRes)
+userController.post("/user/uploadPortrait", uploadFile, async (req, res, next) => {
+    try {
+        let apiRes = await userService.uploadPortrait(req.body, req)
+        res.send(apiRes)
+    } catch (err) {
+        next(err)
+    }
 })
 
 // 校验 token 接口
