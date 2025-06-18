@@ -10,7 +10,7 @@ const svgCaptcha = require("svg-captcha")
 const multer = require("multer")
 // 微信小程序数据解密方法（未使用或是已舍弃）
 const WXBizDataCrypt = require("../common/utils/WXBizDataCrypt")
-const { uploadFile } = require("../common/utils/util")
+const { uploadPortrait } = require("../common/utils/middleKey")
 const md5 = require("md5-node")
 const axios = require("axios")
 
@@ -45,7 +45,7 @@ userController.post("/user/getUserInfoByUserName", async (req, res, next) => {
 })
 
 // 上传头像接口
-userController.post("/user/uploadPortrait", uploadFile, async (req, res, next) => {
+userController.post("/user/uploadPortrait", uploadPortrait, async (req, res, next) => {
     console.log('uploadPortraitCon=====>')
     try {
         let apiRes = await userService.uploadPortrait(req.body, req)
