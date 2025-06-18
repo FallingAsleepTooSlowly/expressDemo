@@ -8,7 +8,7 @@ class UserDao {
     // 登录
     async login (condition) {
         // let sql = "select * from user where name = ? AND password = ?"
-        let sql = " SELECT u.*, JSON_ARRAYAGG(r.role) AS roles FROM user u JOIN roles r ON u.openid = r.user_id WHERE u.name = ? AND password = ? GROUP BY u.openid;"
+        let sql = " SELECT u.*, JSON_ARRAYAGG(r.role) AS roles FROM user u JOIN roles r ON u.openid = r.user_id WHERE u.name = ? AND u.password = ? GROUP BY u.openid;"
         // mysql2 的 execute 参数分别为 execute(<SQL语句>, <参数数组（用 ? 当参数的占位符）>, <SQL语句执行后的回调函数>)
         const data = await protoDB.execute(
             sql,
@@ -19,47 +19,21 @@ class UserDao {
         return data[0][0]
     }
 
-    // 获取最新用户信息
-    async getNewUserInfo (condition) {
-        let sql = "SELECT * FROM user WHERE name = ?"
-        const data = await protoDB.execute(
-            sql,
-            [condition.name],
-            function(err, results, fields) { return }
-        )
-        return data[0][0]
-    }
-
     // 上传头像
     async uploadPortrait (condition) {
-        console.log('???===>', condition)
-        // throw new Error('程序发生了未知错误');
         let sql = "UPDATE user SET portrait = ? WHERE name = ?"
-        const data = await protoDB.execute(
-            sql,
-            [condition.file, condition.name],
-            function(err, results, fields) { return }
-        )
+        const data = await protoDB.execute(sql, [condition.file, condition.name])
         return data[0]
     }
 
-    // 查询所有用户
-    async getUserList () {
-        let sql = "select * from user"
-        const data = await protoDB.execute(sql)
-        // 使用 data[0] 的原因，请查阅 mysql2 文档
-        return data[0]
-    }
-
-    async getUserListByParams (condition) {
-        // mysql2 的 execute 参数分别为 execute(<SQL语句>, <参数数组（用 ? 当参数的占位符）>, <SQL语句执行后的回调函数>)
-        let sql = "select * from user where name = ?"
+    // 根据用户名查询用户信息
+    async getUserInfoByUserName (condition) {
+        console.log('getUserInfoByUserNameDao====>', condition)
+        let sql = " SELECT u.*, JSON_ARRAYAGG(r.role) AS roles FROM user u JOIN roles r ON u.openid = r.user_id WHERE u.name = ? GROUP BY u.openid;"
         const data = await protoDB.execute(
             sql,
             [condition.name],
-            function(err, results, fields) {
-                return
-            }
+            function(err, results, fields) { return }
         )
         return data[0][0]
     }

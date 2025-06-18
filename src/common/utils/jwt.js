@@ -16,13 +16,14 @@ function sign(option) {
 let verify = (isAdmin) => (req, res, next) => {
     // 获取到前端传递过来的 token
     let token = req.headers.token
-    // console.log('token====>', token)
     if (token) {
         // 参数：verify()
         jwt.verify(token, 'danbao', function(err, decoded) {
             // 判断 token 是否失效
             if (err) {
-                res.send(Result.error('token失效'))
+                res.send(Result.error({
+                    message: 'token失效'
+                }))
             } else {
                 // // 判断当前接口是否需要管理员权限
                 // if (isAdmin) {
@@ -44,7 +45,9 @@ let verify = (isAdmin) => (req, res, next) => {
             }
         })
     } else {
-        res.send(Result.error('请提供token'))
+        res.send(Result.error({
+            message: '请提供token' 
+        }))
     }
 }
 

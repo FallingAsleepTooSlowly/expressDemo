@@ -19,13 +19,13 @@ axios.defaults.timeout = 10000      // 设置超时时间为10秒
 axios.defaults.headers.post['Content-Type'] = 'application/json'        // 设置请求头为 json 格式
 
 // 每个对路由 '/user' 的请求都会经过这里
-userController.all('/user/*', (req, res, next) => {
+userController.all('/user/*', jwt.verify(), (req, res, next) => {
     // console.log('is cross user!!!!!!')
     next()
 })
 
 // 用户登陆接口
-userController.post("/user/login", async (req, res) => {
+userController.post("/user/login", async (req, res, next) => {
     try {
         let apiRes = await userService.login(req.body, req)
         res.send(apiRes)
@@ -35,9 +35,9 @@ userController.post("/user/login", async (req, res) => {
 })
 
 // 获取最新用户信息
-userController.post("/user/getNewUserInfo", async (req, res, next) => {
+userController.post("/user/getUserInfoByUserName", async (req, res, next) => {
     try {
-        let apiRes = await userService.getNewUserInfo(req.body, req)
+        let apiRes = await userService.getUserInfoByUserName(req.body, req)
         res.send(apiRes)
     } catch (err) {
         next(err)
@@ -46,6 +46,7 @@ userController.post("/user/getNewUserInfo", async (req, res, next) => {
 
 // 上传头像接口
 userController.post("/user/uploadPortrait", uploadFile, async (req, res, next) => {
+    console.log('uploadPortraitCon=====>')
     try {
         let apiRes = await userService.uploadPortrait(req.body, req)
         res.send(apiRes)
@@ -94,22 +95,6 @@ userController.get("/user/getSvg", async (req, res) => {
 
 
 /* -------------------- 接口示例 ------------------ */
-// get 接口例子
-userController.get("/get", async (req, res) => {
-    var info = await userService.getUserList()
-    console.log('userclass===>', info)
-    // res.send(Result.success(await userService.getUserList()))
-    res.send(Result.success(info))
-    // res.json(userclass)
-})
-
-// post 接口例子
-userController.post("/post", async (req, res) => {
-    // // req.body 是入参
-    // res.send(Result.success(await req.body))
-    var info = await userService.getUserListByParams(req.body)
-    res.send(Result.success(info, '1234'))
-})
 
 // 解密微信小程序数据
 userController.post("/decryptWxData", async (req, res) => {

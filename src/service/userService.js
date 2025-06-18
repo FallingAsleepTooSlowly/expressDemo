@@ -5,15 +5,6 @@ const jwt = require("../common/utils/jwt")
 const Result = require("../common/models/result")
 
 class userService {
-    
-    async getUserList () {
-        return await userDao.getUserList()
-    }
-
-    async getUserListByParams (condition, req) {
-        return await userDao.getUserListByParams(condition)
-    }
-
     // 登陆
     async login (condition, req) {
         // 校验数据。。。。。。
@@ -43,7 +34,6 @@ class userService {
         let userInfo = null
         // 返回的数据
         let apiRes = null
-        console.log('login info=====>', info)
         // ------------ 根据查询的数据返回
         if (info) {
             // let userInfo = new userInfoDto(info)
@@ -65,9 +55,9 @@ class userService {
     }
 
     // 获取最新用户信息
-    async getNewUserInfo(condition, req) {
+    async getUserInfoByUserName(condition, req) {
         // 查询到的数据
-        let info = await userDao.getNewUserInfo(condition)
+        let info = await userDao.getUserInfoByUserName(condition)
         if (info) {
             return Result.success({
                 code: 0,
@@ -83,9 +73,7 @@ class userService {
 
     // 上传头像
     async uploadPortrait (condition, req) {
-        console.log('file?====>', condition.file)
         let info = await userDao.uploadPortrait(condition)
-        console.log('uploadPortrait??=====>', info)
         if (info) {
             return Result.success({
                 code: 0,
