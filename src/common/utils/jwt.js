@@ -44,7 +44,6 @@ let verify = (isAdmin) => (req, res, next) => {
                     // } else {
                     //     next()
                     // }
-                    // console.log('decoded====>', decoded)
                     next()
                 }
             })

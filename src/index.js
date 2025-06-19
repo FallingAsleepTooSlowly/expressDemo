@@ -3,6 +3,7 @@ const express = require("express")
 const app = require("express")()
 const cors = require("cors")  // 引入cors模块
 const Result = require("./common/models/result")
+const path = require('path')
 
 // ------------------ 验证码相关
 // svg-captcha 验证码插件依赖 session 存储验证码信息，session 的认证机制依赖 cookie
@@ -29,13 +30,14 @@ app.use(session({
 }))
 // ------------------
 
-// 配置 cors（允许跨域携带凭证）
-app.use(cors({
-    // 你的前端地址
-    origin: 'http://localhost:9999',
-    // 是否允许携带 cookie（在此处和前端配置跨域允许请求中携带 cookie 后就能传输 session）
-    credentials: true   
-}))
+// 配置 cors（允许跨域携带凭证，前端如果允许跨域后这里就不用配置了）
+// app.use(cors({
+//     // 你的前端地址
+//     // origin: 'http://localhost:9999',
+//     origin: 'http://192.168.132.242:9999',
+//     // 是否允许携带 cookie（在此处和前端配置跨域允许请求中携带 cookie 后就能传输 session）
+//     credentials: true   
+// }))
 
 /* 
 *   express 开发初期，目的在于轻量级，从而舍弃了部分功能，而解析POST请求便被舍弃了，故而在4.x以前，一般使用body-parser来解析
@@ -55,6 +57,9 @@ app.use(require("./common/utils/morgan"))
 
 // 路由分离
 app.use("/", require("./controller"))
+
+// 静态文件访问路径设置
+app.use('/static', express.static(path.join(__dirname, '../files')))
 
 
 // 全局错误处理中间件（需将错误抛出才捕获的到）

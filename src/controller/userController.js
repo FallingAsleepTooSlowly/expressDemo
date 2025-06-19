@@ -20,7 +20,6 @@ axios.defaults.headers.post['Content-Type'] = 'application/json'        // 设�
 
 // 每个对路由 '/user' 的请求都会经过这里
 userController.all('/user/*', jwt.verify(), (req, res, next) => {
-    // console.log('is cross user!!!!!!')
     next()
 })
 
@@ -46,7 +45,6 @@ userController.post("/user/getUserInfoByUserName", async (req, res, next) => {
 
 // 上传头像接口
 userController.post("/user/uploadPortrait", uploadPortrait, async (req, res, next) => {
-    console.log('uploadPortraitCon=====>')
     try {
         let apiRes = await userService.uploadPortrait(req.body, req)
         res.send(apiRes)
@@ -61,6 +59,14 @@ userController.get("/user/checkToken", jwt.verify(), async (req, res) => {
     res.send(Result.success({
         code: 0,
         data: '校验接口'
+    }))
+})
+
+userController.get("/test", async (req, res) => {
+    console.log('testtesttesttesttest')
+    res.send(Result.success({
+        code: 0,
+        data: '校验接口成功！！！'
     }))
 })
 

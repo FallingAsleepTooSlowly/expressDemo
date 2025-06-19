@@ -9,6 +9,7 @@ class userService {
     async login (condition, req) {
         // 校验数据。。。。。。
         // 校验验证码
+        console.log('req.session===>', req.session)
         const captcha = condition.captcha
         if (!captcha) {
             return Result.success({
@@ -59,6 +60,10 @@ class userService {
         // 查询到的数据
         let info = await userDao.getUserInfoByUserName(condition)
         if (info) {
+            console.log('getUserInfoByUserNameS=======>', info)
+            // if (info.portrait) {
+            //     info.portrait = 
+            // }
             return Result.success({
                 code: 0,
                 data: UserInfoDto.fromDataBase(info)
