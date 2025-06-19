@@ -103,7 +103,11 @@ function uploadPortrait (req, res, next) {
                     });
         */
         // 获取到文件的扩展名，如 .jpg
-        // path.extname(req.file.originalname)
+        let ext = path.extname(req.file.originalname)
+        // 验证扩展名
+        if (!['.png', '.jpg'].includes(ext)) {
+            return cb(new Error('只允许图片文件'));
+        }
         console.log('upload req.file=====>', req.file)
         return Result.success({
             code: 1,
