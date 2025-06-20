@@ -3,6 +3,7 @@ const { UserInfoDto } = require("../dto/userInfo.dto")
 // token 生成和校验
 const jwt = require("../common/utils/jwt")
 const Result = require("../common/models/result")
+const path = require("path")
 
 class userService {
     // 登陆
@@ -60,10 +61,6 @@ class userService {
         // 查询到的数据
         let info = await userDao.getUserInfoByUserName(condition)
         if (info) {
-            console.log('getUserInfoByUserNameS=======>', info)
-            // if (info.portrait) {
-            //     info.portrait = 
-            // }
             return Result.success({
                 code: 0,
                 data: UserInfoDto.fromDataBase(info)
@@ -78,6 +75,8 @@ class userService {
 
     // 上传头像
     async uploadPortrait (condition, req) {
+        const ext = path.extname(req.file.originalname)
+        condition.file = `${condition.name}-${Date.now()}${ext}`
         let info = await userDao.uploadPortrait(condition)
         if (info) {
             return Result.success({

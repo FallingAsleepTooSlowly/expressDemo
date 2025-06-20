@@ -11,7 +11,7 @@ function fullPath (type) {
 }
 
 // 使用 diskStorage 磁盘存储引擎来控制文件的存储，有两个属性，属性值都是函数。destination 用来指定文件存储的路径；filename 用来指定文件的存储名称。
-let storage = multer.diskStorage({
+const storage = multer.diskStorage({
     // 设置存储路径
     /*
         参数：
@@ -24,13 +24,14 @@ let storage = multer.diskStorage({
     destination: (req, file, cb) => {
         console.log('destination file=====>', file)
         // 根据入参决定保存的路径
-        cb(null, fullPath(req.body.type))
+        // cb(null, fullPath(req.body.type))
+        cb(null, './files/portrait')
     },
     // 设置存储的文件名
     /*
         参数：
             req: Express 请求对象（包含请求信息）
-            file: 上传的文件对象（包含原始文件名、MIME 类型等）
+            file: 上传的文件对象（包含 fieldname, originalname, mimetype, size）
             cb: 回调函数（必须调用以继续流程）
                 成功时的写法：cb(null, <存储文件名>)
                 失败时的写法：cb(new Error('Invalid path'))
@@ -42,12 +43,23 @@ let storage = multer.diskStorage({
             保留原始扩展名：path.extname(file.originalname)
     */
     filename: (req, file, cb) => {
-        cb(null, file.originalname)
+        // 获取到文件的扩展名，如 .jpg
+        const ext = path.extname(file.originalname)
+        const name = req.body.name
+        // 验证扩展名（防止上传恶意文件）
+        if (!['.png', '.jpg', '.jpeg', '.gif', '.svg'].includes(ext.toLowerCase())) {
+            return cb(new Error('只允许图片文件'));
+        } else {
+            cb(null, `${name}-${Date.now()}${ext}`)
+        }
     }
 })
 
-// 上传头像的自定义中间件
-function uploadPortrait (req, res, next) {
+// 上传头像的自定义中间件，使用 diskStorage 的写法
+const uploadPortrait = multer({ storage })
+
+// 上传头像的自定义中间件，不使用 diskStorage 的写法
+function elseUploadPortrait (req, res, next) {
     /*
         multer(options).single(fieldname);
         single 代表只能上传一个文件，fieldname 为上传时文件的字段名称（下方使用时的字段名称）
@@ -78,7 +90,6 @@ function uploadPortrait (req, res, next) {
         fileFilter：文件过滤器，控制哪些文件可以被接受
         preservePath：保存包含文件名的完整文件路径
     */ 
-    // 普通写法
     let upload = multer({dest: './files/portrait'}).single("file")
     upload(req, res, (err) => {
         /*
@@ -101,27 +112,27 @@ function uploadPortrait (req, res, next) {
                     const upload = multer({
                         limits: { fileSize: 1024 * 1024 } // 限制1MB
                     });
+
+            常见问题：
+            1. req.file 为 undefined，原因可能为：
+                1）未添加 enctype="multipart/form-data" 到表单，解决方法：<form action="/upload" method="post" enctype="multipart/form-data">
+                2）中间件使用错误，如用 upload.single() 处理多文件
+                3）文件大小超过 Multer 的 limits 配置
+            2. 如何获取上传后的文件：
+                1）磁盘存储：使用 fs 模块操作 req.file.path
+                2）内存存储：直接访问 req.file.buffer
+            3. 如何删除上传的文件：
+                const fs = require('fs');
+                fs.unlink(req.file.path, (err) => {
+                    if (err) console.error('删除文件失败', err);
+                });
         */
-        // 获取到文件的扩展名，如 .jpg
-        let ext = path.extname(req.file.originalname)
-        // 验证扩展名
-        if (!['.png', '.jpg'].includes(ext)) {
-            return cb(new Error('只允许图片文件'));
+        if (err) {
+            
+        } else {
+            req.body.file = req.file.originalname
+            next()
         }
-        console.log('upload req.file=====>', req.file)
-        return Result.success({
-            code: 1,
-            message: "错误！错误！"
-        })
-        // if (err) {
-        //     return Result.success({
-        //         code: 1,
-        //         message: err
-        //     })
-        // } else {
-        //     req.body.file = req.file.originalname
-        //     next()
-        // }
     })
 }
 

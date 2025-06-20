@@ -44,7 +44,12 @@ userController.post("/user/getUserInfoByUserName", async (req, res, next) => {
 })
 
 // 上传头像接口
-userController.post("/user/uploadPortrait", uploadPortrait, async (req, res, next) => {
+userController.post("/user/uploadPortrait", uploadPortrait.single("file"), async (req, res, next) => {
+    console.log('/user/uploadPortrait=======>', req.file)
+    // res.send(Result.success({
+    //     code: 0,
+    //     data: '错了错了！！'
+    // }))
     try {
         let apiRes = await userService.uploadPortrait(req.body, req)
         res.send(apiRes)
