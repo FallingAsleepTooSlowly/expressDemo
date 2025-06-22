@@ -4,6 +4,8 @@ const { UserInfoDto } = require("../dto/userInfo.dto")
 const jwt = require("../common/utils/jwt")
 const Result = require("../common/models/result")
 const path = require("path")
+const fs = require('fs')
+const { fullPath } = require("../common/utils/middleKey")
 
 class userService {
     // 登陆
@@ -75,10 +77,13 @@ class userService {
 
     // 上传头像
     async uploadPortrait (condition, req) {
-        const ext = path.extname(req.file.originalname)
-        condition.file = `${condition.name}-${Date.now()}${ext}`
         let info = await userDao.uploadPortrait(condition)
-        if (info) {
+        if (info.updateResult) {
+            const oldFile = fullPath(condition.type) + '/' + info.oldUserInfo.portrait
+            // fs.unlink(<要删除的文件路径>, <失败后的回调函数>)
+            fs.unlink(oldFile, (err) => {
+                if (err) console.error('删除文件失败', err);
+            })
             return Result.success({
                 code: 0,
                 message: '上传成功！'

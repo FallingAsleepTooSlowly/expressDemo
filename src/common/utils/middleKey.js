@@ -1,4 +1,15 @@
 /* 自定义的中间件 */
+/*
+    中间键抛出错误方法：
+    const middleKey = (req, res, next) => {
+        try {
+            throw new Error("手动抛出错误");
+        } catch (err) {
+            next(err);
+        }
+    }
+    
+*/
 
 // multer 用于将本地文件/图片上传到服务器指定目录
 const multer = require("multer")
@@ -6,9 +17,14 @@ const Result = require("../models/result")
 const path = require("path")
 
 // 获取存储的绝对路径
-function fullPath (type) {
-    return './files/' + type
+function fullPath (url) {
+    const path = {
+        '/user/uploadPortrait': './files/portrait'
+    }
+    return path[url]
 }
+// 分段存储的绝对路径
+const tempPath = './files/temp'
 
 // 使用 diskStorage 磁盘存储引擎来控制文件的存储，有两个属性，属性值都是函数。destination 用来指定文件存储的路径；filename 用来指定文件的存储名称。
 const storage = multer.diskStorage({
@@ -22,10 +38,9 @@ const storage = multer.diskStorage({
                 失败时的写法：cb(new Error('Invalid path'))
     */
     destination: (req, file, cb) => {
-        console.log('destination file=====>', file)
-        // 根据入参决定保存的路径
-        // cb(null, fullPath(req.body.type))
-        cb(null, './files/portrait')
+        // 决定保存的路径
+        cb(null, fullPath(req.url))
+        // cb(null, './files/portrait')
     },
     // 设置存储的文件名
     /*
@@ -46,11 +61,14 @@ const storage = multer.diskStorage({
         // 获取到文件的扩展名，如 .jpg
         const ext = path.extname(file.originalname)
         const name = req.body.name
+        const fileName = name + '-' + Date.now() + ext
+        req.body.file = fileName
         // 验证扩展名（防止上传恶意文件）
         if (!['.png', '.jpg', '.jpeg', '.gif', '.svg'].includes(ext.toLowerCase())) {
             return cb(new Error('只允许图片文件'));
         } else {
-            cb(null, `${name}-${Date.now()}${ext}`)
+            // cb(null, `${name}-${Date.now()}${ext}`)
+            cb(null, fileName)
         }
     }
 })
@@ -63,7 +81,7 @@ function elseUploadPortrait (req, res, next) {
     /*
         multer(options).single(fieldname);
         single 代表只能上传一个文件，fieldname 为上传时文件的字段名称（下方使用时的字段名称）
-        例：multer({dest: './portrait'}).single("file");
+        例：multer({dest: './ortrait'}).single("file");
 
         multer(options).array(fieldname, [maxCount]);
         array 代表一次能上传多个文件，maxCount 为上传的最大数量
@@ -137,5 +155,6 @@ function elseUploadPortrait (req, res, next) {
 }
 
 module.exports = {
-    uploadPortrait
+    uploadPortrait,
+    fullPath
 }

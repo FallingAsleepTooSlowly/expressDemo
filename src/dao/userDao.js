@@ -21,9 +21,13 @@ class UserDao {
 
     // 上传头像
     async uploadPortrait (condition) {
+        const oldUserInfo = await this.getUserInfoByUserName(condition)
         let sql = "UPDATE user SET portrait = ? WHERE name = ?"
         const data = await protoDB.execute(sql, [condition.file, condition.name])
-        return data[0]
+        return {
+            updateResult: data[0],
+            oldUserInfo
+        }
     }
 
     // 根据用户名查询用户信息

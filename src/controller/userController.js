@@ -95,7 +95,6 @@ userController.get("/user/getSvg", async (req, res) => {
     })
     // session 存储验证码数值
     req.session.captcha = cap.text
-    console.log('????===>', req.session)
     // 设置响应的类型
     res.type('svg')
     res.send(Result.success({
