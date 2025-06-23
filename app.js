@@ -1,6 +1,6 @@
 /* 此文件用于启用，启动方式为 nodemon app */
 const app = require("./src")
-const port = 9000
+const { port } = require("./src/common/config/constant")
 
 // 记录启动速度
 // console.time(`Service http://localhost:${port} Start Time`);

@@ -213,5 +213,6 @@ function checkFileSize (req, res, next) {
 module.exports = {
     uploadPortrait,
     memoryUploadFile,
+    diskUploadFile,
     urlDefinePath
 }
