@@ -16,18 +16,30 @@ const multer = require("multer")
 const Result = require("../models/result")
 const path = require("path")
 
-// 获取存储的绝对路径
-function fullPath (url) {
+// ------------------------------ 文件上传路径
+
+// 根据获取存储的绝对路径
+function urlDefinePath (url) {
     const path = {
         '/user/uploadPortrait': './files/portrait'
     }
     return path[url]
 }
+// 根据文件夹名获取存储路径
+function folderDefinePath (folder) {
+    return './files/' + folder
+}
 // 分段存储的绝对路径
 const tempPath = './files/temp'
+// 用户文件路径
+function userPath () {
+    
+}
+
+// ------------------------------ 普通文件上传方法
 
 // 使用 diskStorage 磁盘存储引擎来控制文件的存储，有两个属性，属性值都是函数。destination 用来指定文件存储的路径；filename 用来指定文件的存储名称。
-const storage = multer.diskStorage({
+const theStorage = multer.diskStorage({
     // 设置存储路径
     /*
         参数：
@@ -39,7 +51,7 @@ const storage = multer.diskStorage({
     */
     destination: (req, file, cb) => {
         // 决定保存的路径
-        cb(null, fullPath(req.url))
+        cb(null, urlDefinePath(req.url))
         // cb(null, './files/portrait')
     },
     // 设置存储的文件名
@@ -73,8 +85,9 @@ const storage = multer.diskStorage({
     }
 })
 
-// 上传头像的自定义中间件，使用 diskStorage 的写法
-const uploadPortrait = multer({ storage })
+// 上传头像的自定义中间件，使用storage 代替 dest 后，Multer 会将存储引擎由 DiskStorage (硬盘存储)切换为 MemoryStorage (内存存储)
+// 使用 storage 可以对上传文件做更多的控制，这里的 storage 中我们使用 diskStorage，所以依旧是硬盘存储
+const uploadPortrait = multer({ storage: theStorage })
 
 // 上传头像的自定义中间件，不使用 diskStorage 的写法
 function elseUploadPortrait (req, res, next) {
@@ -103,7 +116,7 @@ function elseUploadPortrait (req, res, next) {
         接收只有文本域的表单，如果上传任何文件，会返回 “LIMIT_UNEXPECTED_FILE” 错误。
 
         上述使用方式中 options 的配置项有：
-        dest 或 storage：在哪里存储文件
+        dest 或 storage：在哪里存储文件（如果忽略该选项，文件会被保存在内存中，并且永远不会写入硬盘中）
         limits：限制上传数据的大小
         fileFilter：文件过滤器，控制哪些文件可以被接受
         preservePath：保存包含文件名的完整文件路径
@@ -146,7 +159,11 @@ function elseUploadPortrait (req, res, next) {
                 });
         */
         if (err) {
-            
+            try {
+                throw new Error("文件不存在！");
+            } catch (err) {
+                next(err);
+            }
         } else {
             req.body.file = req.file.originalname
             next()
@@ -154,7 +171,47 @@ function elseUploadPortrait (req, res, next) {
     })
 }
 
+// ------------------------------ 大文件分段上传方法
+
+// 使用 memoryStorage 内存存储，避免直接写入磁盘
+const memoryStorage = multer.memoryStorage()
+const memoryUploadFile = multer({ storage: memoryStorage })
+
+// 使用 diskStorage 磁盘存储，直接写入磁盘
+const diskStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        console.log('diskStoragediskStorage====>', req)
+        cb(new Error('Invalid path'))
+        // 决定保存的路径
+        // cb(null, folderDefinePath(req.body.id))
+    },
+    filename: (req, file, cb) => {
+        // 获取到文件的扩展名，如 .jpg
+        const ext = path.extname(file.originalname)
+        const fileName = Date.now() + ext
+        req.body.file = fileName
+        // cb(null, `${name}-${Date.now()}${ext}`)
+        cb(null, fileName)
+    }
+})
+const diskUploadFile = multer({ storage: diskStorage })
+
+// 判断文件大小
+function checkFileSize (req, res, next) {
+    // 文件大小超过 40 MB 时判断是大文件
+    if (req.file.size > 41943040) {
+        memoryUploadFile.single("file")
+        next()
+    } else {
+        diskUploadFile.single("file")
+        next()
+    }
+}
+
+// ------------------------------ 通用文件上传
+
 module.exports = {
     uploadPortrait,
-    fullPath
+    memoryUploadFile,
+    urlDefinePath
 }

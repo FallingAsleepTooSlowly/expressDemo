@@ -10,7 +10,7 @@ class UserInfoDto {
         // this.portrait = user.portrait
 
         // 使用 lodash 的 pick 函数筛选想要的字段，再用 Object.assign 将对象中所有可枚举的自有属性复制出来
-        const needFields = ['openid', 'name', 'roles', 'portrait']
+        const needFields = ['id', 'openid', 'name', 'roles', 'portrait']
         Object.assign(this, _.pick(user, needFields))
 
         // 使用 lodash 的 omit 函数排除不想要的字段，再用 Object.assign 将对象中所有可枚举的自有属性复制出来

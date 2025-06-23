@@ -1,3 +1,5 @@
+/* 用户信息相关接口 */
+
 const userController = require("express").Router()
 const userService = require("../service/userService")
 // token 生成和校验

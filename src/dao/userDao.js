@@ -8,7 +8,7 @@ class UserDao {
     // 登录
     async login (condition) {
         // let sql = "select * from user where name = ? AND password = ?"
-        let sql = " SELECT u.*, JSON_ARRAYAGG(r.role) AS roles FROM user u JOIN roles r ON u.openid = r.user_id WHERE u.name = ? AND u.password = ? GROUP BY u.openid;"
+        let sql = " SELECT u.*, JSON_ARRAYAGG(r.role) AS roles FROM user u JOIN roles r ON u.id = r.user_id WHERE u.name = ? AND u.password = ? GROUP BY u.id;"
         // mysql2 的 execute 参数分别为 execute(<SQL语句>, <参数数组（用 ? 当参数的占位符）>, <SQL语句执行后的回调函数>)
         const data = await protoDB.execute(
             sql,
@@ -33,7 +33,7 @@ class UserDao {
     // 根据用户名查询用户信息
     async getUserInfoByUserName (condition) {
         console.log('getUserInfoByUserNameDao====>', condition)
-        let sql = " SELECT u.*, JSON_ARRAYAGG(r.role) AS roles FROM user u JOIN roles r ON u.openid = r.user_id WHERE u.name = ? GROUP BY u.openid;"
+        let sql = " SELECT u.*, JSON_ARRAYAGG(r.role) AS roles FROM user u JOIN roles r ON u.id = r.user_id WHERE u.name = ? GROUP BY u.id;"
         const data = await protoDB.execute(
             sql,
             [condition.name],

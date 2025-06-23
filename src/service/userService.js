@@ -5,7 +5,7 @@ const jwt = require("../common/utils/jwt")
 const Result = require("../common/models/result")
 const path = require("path")
 const fs = require('fs')
-const { fullPath } = require("../common/utils/middleKey")
+const { urlDefinePath } = require("../common/utils/middleKey")
 
 class userService {
     // 登陆
@@ -79,7 +79,7 @@ class userService {
     async uploadPortrait (condition, req) {
         let info = await userDao.uploadPortrait(condition)
         if (info.updateResult) {
-            const oldFile = fullPath(condition.type) + '/' + info.oldUserInfo.portrait
+            const oldFile = urlDefinePath(condition.type) + '/' + info.oldUserInfo.portrait
             // fs.unlink(<要删除的文件路径>, <失败后的回调函数>)
             fs.unlink(oldFile, (err) => {
                 if (err) console.error('删除文件失败', err);
