@@ -5,14 +5,14 @@ const userService = require("../service/userService")
 // token 生成和校验
 const jwt = require("../common/utils/jwt")
 // const userclass = require("../class/userClass")
-const Result = require("../common/models/result")
+const Result = require("../common/config/result")
 // 生成验证码
 const svgCaptcha = require("svg-captcha")
 // multer 用于将本地文件/图片上传到服务器指定目录
 const multer = require("multer")
 // 微信小程序数据解密方法（未使用或是已舍弃）
 const WXBizDataCrypt = require("../common/utils/WXBizDataCrypt")
-const { uploadPortrait } = require("../common/utils/middleKey")
+const { uploadPortrait } = require("../middleware/upload")
 const md5 = require("md5-node")
 const axios = require("axios")
 

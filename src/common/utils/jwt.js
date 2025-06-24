@@ -1,7 +1,7 @@
 /* 使用 jsonwebtoken 生成 token */
 
 const jwt = require('jsonwebtoken')
-const Result = require("../models/result")
+const Result = require("../config/result")
 const { jwtWhiteList } = require("./util")
 
 // sign 用于生成 token，666 用于加密的私钥可以自行定义

@@ -2,10 +2,10 @@ const userDao = require("../dao/userDao")
 const { UserInfoDto } = require("../dto/userInfo.dto")
 // token 生成和校验
 const jwt = require("../common/utils/jwt")
-const Result = require("../common/models/result")
+const Result = require("../common/config/result")
 const path = require("path")
 const fs = require('fs')
-const { urlDefinePath } = require("../common/utils/middleKey")
+const { urlDefinePath } = require("../middleware/upload")
 
 class userService {
     // 登陆

@@ -2,7 +2,7 @@
 const express = require("express")
 const app = require("express")()
 const cors = require("cors")  // 引入cors模块
-const Result = require("./common/models/result")
+const Result = require("./common/config/result")
 const path = require('path')
 
 // ------------------ 验证码相关

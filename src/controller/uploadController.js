@@ -5,9 +5,11 @@ const uploadController = require("express").Router()
 const jwt = require("../common/utils/jwt")
 // fs-extra 是 fs 的扩展
 const fs = require("fs-extra")
-const { memoryUploadFile } = require("../common/utils/middleKey")
-const Result = require("../common/models/result")
+const { memoryUploadFile, customizedStorage } = require("../middleware/upload")
+const Result = require("../common/config/result")
+const uploadService = require("../service/uploadService")
 const { port } = require("../common/config/constant")
+const multer = require("multer")
 const axios = require("axios")
 
 // 单独配置一些默认参数
@@ -21,23 +23,10 @@ uploadController.all("/upload/*", jwt.verify(), (req, res, next) => {
 })
 
 // 上传文件接口
-uploadController.post("/upload/uploadFile", async (req, res, next) => {
+uploadController.post("/upload/uploadFile", multer({ storage: customizedStorage }).single('file'), async (req, res, next) => {
     try {
-        console.log('reqreqreqreq===>', req.file)
-        // 文件大小超过 40 MB 时判断是大文件
-        if (req.file.size > 41943040) {
-            const response = await axios.post(`http://localhost:${port}/upload/uploadBigFile`, req.body)
-            console.log("upload/uploadFile====>", response)
-            res.send(Result.success({
-                code: 0,
-                data: '这是大文件'
-            }))
-        } else {
-            res.send(Result.success({
-                code: 0,
-                data: '这是小文件'
-            }))
-        }
+        let apiRes = await uploadService.uploadFile(req.body, req)
+        res.send(apiRes)
     } catch (err) {
         next(err)
     }
@@ -48,9 +37,8 @@ uploadController.post("/upload/uploadFile", async (req, res, next) => {
 
 // 上传大文件接口
 uploadController.post("/upload/uploadBigFile"), memoryUploadFile.single("file"), async (req, res, next) => {
-    return {
-        data: 33333
-    }
+    // 接口之间互相调用
+    const response = await axios.post(`http://localhost:${port}/upload/uploadBigFile`, req.body)
 }
 
 module.exports = uploadController
