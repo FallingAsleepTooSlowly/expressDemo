@@ -5,7 +5,7 @@ const uploadController = require("express").Router()
 const jwt = require("../common/utils/jwt")
 // fs-extra 是 fs 的扩展
 const fs = require("fs-extra")
-const { memoryUploadFile, customizedStorage } = require("../middleware/upload")
+const { memoryUploadFile, customizedStorage, diskUploadFile } = require("../middleware/upload")
 const Result = require("../common/config/result")
 const uploadService = require("../service/uploadService")
 const { port } = require("../common/config/constant")
@@ -36,9 +36,34 @@ uploadController.post("/upload/uploadFile", multer({ storage: customizedStorage 
 })
 
 // 上传大文件接口
-uploadController.post("/upload/uploadBigFile"), memoryUploadFile.single("file"), async (req, res, next) => {
+uploadController.post("/upload/uploadBigFile", memoryUploadFile.single("file"), async (req, res, next) => {
     // 接口之间互相调用
     const response = await axios.post(`http://localhost:${port}/upload/uploadBigFile`, req.body)
-}
+})
+
+// 上传单一文件接口
+uploadController.post("/upload/uploadSingleFile", diskUploadFile.single('file'), async (req, res, next) => {
+    console.log('uploadSingleFile==>', req.body)
+    try {
+        res.send(Result.success({
+            code: 0,
+            data: '上传单一文件接口'
+        }))
+    } catch (err) {
+        next(err)
+    }
+})
+
+// 上传多个文件接口
+uploadController.post("/upload/uploadMultipleFiles", diskUploadFile.array('file', 5), async (req, res, next) => {
+    try {
+        res.send(Result.success({
+            code: 0,
+            data: '上传多个文件接口'
+        }))
+    } catch (err) {
+        next(err)
+    }
+})
 
 module.exports = uploadController

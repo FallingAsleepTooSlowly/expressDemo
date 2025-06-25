@@ -51,8 +51,10 @@ const theStorage = multer.diskStorage({
                 失败时的写法：cb(new Error('Invalid path'))
     */
     destination: (req, file, cb) => {
+        console.log('theStoragetheStorage===>', req.body)
+        cb(new Error('Invalid path'))
         // 决定保存的路径
-        cb(null, urlDefinePath(req.url))
+        // cb(null, urlDefinePath(req.url))
         // cb(null, './files/portrait')
     },
     // 设置存储的文件名
@@ -172,7 +174,7 @@ function elseUploadPortrait (req, res, next) {
     })
 }
 
-// ------------------------------ 不同的存储方法
+// ------------------------------ 不同的存储方法（用户文件上传）
 
 // 使用 memoryStorage 内存存储，避免直接写入磁盘
 const memoryStorage = multer.memoryStorage()
@@ -181,7 +183,7 @@ const memoryUploadFile = multer({ storage: memoryStorage })
 // 使用 diskStorage 磁盘存储，直接写入磁盘
 const diskStorage = multer.diskStorage({
     destination: (req, file, cb) => {
-        console.log('diskStoragediskStorage====>', req)
+        console.log('diskStorage===>', req.body)
         cb(new Error('Invalid path'))
         // 决定保存的路径
         // cb(null, folderDefinePath(req.body.id))
@@ -209,33 +211,26 @@ const customizedStorage = {
         // 文件大小超过 40 MB 时判断是大文件
         const MAX_SIZE = 40 * 1024 * 1024
         console.log('file===>', file)
-        if (file.size < MAX_SIZE) {
-            console.log('111111')
-            // 大文件存储
-            memoryUploadFile._handleFile(req, file, cb)
-        } else {
-            console.log(222222)
-            // 小文件的磁盘存储
-            multer.diskStorage({
-                // 设置存储路径，只有路径的话可直接简写为 destination: 'uploads/'
-                destination: (req, file, cb) => {
-                    console.log('diskStorage===>', file)
-                    // 确保目录存在，如果目录结构不存在，它将由该函数创建
-                    fs.ensureDirSync(folderDefinePath(req.body.id))
-                    // 决定保存的路径
-                    cb(null, folderDefinePath(req.body.id))
-                },
-                // 设置存储的文件名，只有文件名可直接简写为 filename: (req, file, cb) => cb(null, `${Date.now()}-${file.originalname}`)
-                filename: (req, file, cb) => {
-                    // 获取到文件的扩展名，如 .jpg
-                    const ext = path.extname(file.originalname)
-                    const id = req.body.id
-                    const fileName = id + '-' + Date.now() + ext
-                    req.body.file = fileName
-                    cb(null, fileName)
-                }
-            })._handleFile(req, file, cb)
-        }
+        
+        multer.diskStorage({
+            // 设置存储路径，只有路径的话可直接简写为 destination: 'uploads/'
+            destination: (req, file, cb) => {
+                console.log('diskStorage===>', file)
+                // 确保目录存在，如果目录结构不存在，它将由该函数创建
+                fs.ensureDirSync(folderDefinePath(req.body.id))
+                // 决定保存的路径
+                cb(null, folderDefinePath(req.body.id))
+            },
+            // 设置存储的文件名，只有文件名可直接简写为 filename: (req, file, cb) => cb(null, `${Date.now()}-${file.originalname}`)
+            filename: (req, file, cb) => {
+                // 获取到文件的扩展名，如 .jpg
+                const ext = path.extname(file.originalname)
+                const id = req.body.id
+                const fileName = id + '-' + Date.now() + ext
+                req.body.file = fileName
+                cb(null, fileName)
+            }
+        })._handleFile(req, file, cb)
     },
      // 可选方法用于删除已存储的文件，通常在处理过程中发生错误时由 Multer 自动调用
     _removeFile(req, file, cb) {
@@ -250,6 +245,7 @@ const customizedStorage = {
         }
     }
 }
+
 
 module.exports = {
     uploadPortrait,
