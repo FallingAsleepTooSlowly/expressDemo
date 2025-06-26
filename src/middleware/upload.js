@@ -52,10 +52,9 @@ const theStorage = multer.diskStorage({
     */
     destination: (req, file, cb) => {
         console.log('theStoragetheStorage===>', req.body)
-        cb(new Error('Invalid path'))
         // 决定保存的路径
         // cb(null, urlDefinePath(req.url))
-        // cb(null, './files/portrait')
+        cb(null, './files/portrait')
     },
     // 设置存储的文件名
     /*
@@ -183,18 +182,23 @@ const memoryUploadFile = multer({ storage: memoryStorage })
 // 使用 diskStorage 磁盘存储，直接写入磁盘
 const diskStorage = multer.diskStorage({
     destination: (req, file, cb) => {
-        console.log('diskStorage===>', req.body)
-        cb(new Error('Invalid path'))
+        // cb(new Error('Invalid path'))
         // 决定保存的路径
-        // cb(null, folderDefinePath(req.body.id))
+        cb(null, folderDefinePath(req.body.id))
     },
     filename: (req, file, cb) => {
         // 获取到文件的扩展名，如 .jpg
         const ext = path.extname(file.originalname)
-        const fileName = Date.now() + ext
-        req.body.file = fileName
+        if (req.body.id) {
+            const fileName = `${req.body.id}-${Date.now()}${ext}`
+            req.body.file = fileName
+            cb(null, fileName)
+        } else {
+            const fileName = `${Date.now()}${ext}`
+            req.body.file = fileName
+            cb(null, fileName)
+        }
         // cb(null, `${name}-${Date.now()}${ext}`)
-        cb(null, fileName)
     }
 })
 const diskUploadFile = multer({ storage: diskStorage })
