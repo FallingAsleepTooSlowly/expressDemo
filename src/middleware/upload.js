@@ -250,6 +250,27 @@ const customizedStorage = {
     }
 }
 
+// ------------------------------ 大文件分段上传
+
+/*
+    fs.readdirSync(path, options) 方法用于同步读取给定目录的内容，并返回一个包含目录中所有文件名或对象的数组
+        path: 必须读取内容的目录路径，可以是字符串、缓冲区或 URL
+        options: 一个对象，可用于指定影响方法的可选参数。它具有两个可选参数： encoding: 指定返回文件名使用的编码，默认值为 "utf8"。 withFileTypes: 布尔值，指定是否将文件作为 fs.Dirent 对象返回，默认值为 false^2^
+
+    sort() 方法用于对数组的元素进行排序，并返回数组，默认排序顺序是根据字符串 Unicode 码点，即字符编码的顺序
+        升序：array.sort(function(a, b) { return a - b })
+        降序：array.sort(function(a, b) { return b - a })
+
+    fs.appendFileSync(filepath, data, options) 用于将数据同步添加到文件
+        filepath: 字符串，用于指定文件路径
+        data: 附加到文件的内容
+        options(非必填): 指定的编码/模式/标志，如 'utf8' 或 {encoding:'utf8', flag:'r'})
+
+    fs.readFileSync(path, options) 用于同步读取文件并返回其内容
+        path: 读取的文件
+        options(非必填): 指定的编码/模式/标志，如 'utf8' 或 {encoding:'utf8', flag:'r'})
+*/
+
 
 module.exports = {
     uploadPortrait,
