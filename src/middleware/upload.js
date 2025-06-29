@@ -32,10 +32,6 @@ function folderDefinePath (folder) {
 }
 // 分段存储的绝对路径
 const tempPath = './files/temp'
-// 用户文件路径
-function userPath () {
-    
-}
 
 // ------------------------------ 普通文件上传方法
 
@@ -271,11 +267,51 @@ const customizedStorage = {
         options(非必填): 指定的编码/模式/标志，如 'utf8' 或 {encoding:'utf8', flag:'r'})
 */
 
+const chunkFileStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        // try {
+            /*
+                Buffer.from(text, inType).toString(outType);
+                    text: 需要转换内容
+                    inType: 指定数据源的编码类型，node 目前支持 ascii、utf8、utf16le、ucs2、base64、latin1、binary、hex
+                    outType: 指定需要得到的编码类型
+            */
+            /*
+                Buffer 实例一般用于表示编码字符的序列，比如 UTF-8 、 UCS2 、 Base64 、或十六进制编码的数据。 通过使用显式的字符编码，就可以在 Buffer 实例与普通的 JavaScript 字符串之间进行相互转换。
+                latin1 是一种把 Buffer 编码成一字节编码的字符串的方式，下方为将 latin1 编码转换为 utf8 编码，确保不会出现中文乱码的情况
+            */ 
+           console.log('filefilefile====>', file)
+            const fileOriginalname = Buffer.from(file.originalname, 'latin1').toString('utf-8');
+            console.log('fileOriginalname=====>', fileOriginalname)
+            let [fname, index, ext] = fileOriginalname.split(".")
+            // 临时保存路径
+            const chunkAddress = tempPath + '/' + fname
+            // 确保路径存在，不存在会自动创建
+            fs.ensureDirSync(chunkAddress)
+            cb(new Error('存储路径有问题'))
+            // cb(null, chunkAddress)
+        // } catch (err) {
+        //     cb('存储路径有问题')
+        // }
+        
+    },
+    filename: (req, file, cb) => {
+        const fileOriginalname = Buffer.from(req.file.originalname, 'latin1').toString('utf-8');
+        let [fname, index, ext] = fileOriginalname.split(".")
+        // 因为是分片文件，所以按照索引命名，且不添加扩展名，等合并后再添加扩展名
+        const fileName = index
+        cb(null, fileName)
+        // cb(null, `${name}-${Date.now()}${ext}`)
+    }
+})
+const chunkFileUpload = multer({ storage: chunkFileStorage })
+
 
 module.exports = {
     uploadPortrait,
     memoryUploadFile,
     diskUploadFile,
     customizedStorage,
+    chunkFileUpload,
     urlDefinePath
 }
