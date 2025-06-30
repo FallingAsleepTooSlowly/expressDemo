@@ -64,13 +64,19 @@ uploadController.post("/upload/uploadMultipleFiles", diskUploadFile.array('file'
 })
 
 // 分段上传文件接口
-uploadController.post("/upload/uploadChunkFile", chunkFileUpload.single('file'), async (req, res, next) => {
-    console.log('uploadChunkFile==>', req.body)
+uploadController.post("/upload/uploadChunkFile", async (req, res, next) => {
+    console.log('uploadCh2222unkFile==>', req.body)
     try {
-        res.send(Result.success({
-            code: 0,
-            data: '分段上传文件接口'
-        }))
+        chunkFileUpload.single('file')(req, res, (err) => {
+            if (err) {
+                throw new Error(err)
+            } else {
+                res.send(Result.success({
+                    code: 0,
+                    data: '分段文件上传成功'
+                }))
+            }
+        })
     } catch (err) {
         next(err)
     }

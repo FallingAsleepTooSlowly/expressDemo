@@ -269,7 +269,7 @@ const customizedStorage = {
 
 const chunkFileStorage = multer.diskStorage({
     destination: (req, file, cb) => {
-        // try {
+        try {
             /*
                 Buffer.from(text, inType).toString(outType);
                     text: 需要转换内容
@@ -280,7 +280,12 @@ const chunkFileStorage = multer.diskStorage({
                 Buffer 实例一般用于表示编码字符的序列，比如 UTF-8 、 UCS2 、 Base64 、或十六进制编码的数据。 通过使用显式的字符编码，就可以在 Buffer 实例与普通的 JavaScript 字符串之间进行相互转换。
                 latin1 是一种把 Buffer 编码成一字节编码的字符串的方式，下方为将 latin1 编码转换为 utf8 编码，确保不会出现中文乱码的情况
             */ 
-           console.log('filefilefile====>', file)
+           /*
+                当请求中包含文件时，Express 通常使用`multipart/form-data`格式。处理这种格式的中间件（如`multer`）可能会在错误发生时直接中断连接，
+                导致连接重置，而不是进入错误处理中间件，所以若 destination 或 filename 里报错的话，连接会重置，前端获取不到任何返回数据
+           */
+            console.log('filefilefile====>', file)
+            // 解决中文乱码问题
             const fileOriginalname = Buffer.from(file.originalname, 'latin1').toString('utf-8');
             console.log('fileOriginalname=====>', fileOriginalname)
             let [fname, index, ext] = fileOriginalname.split(".")
@@ -288,12 +293,11 @@ const chunkFileStorage = multer.diskStorage({
             const chunkAddress = tempPath + '/' + fname
             // 确保路径存在，不存在会自动创建
             fs.ensureDirSync(chunkAddress)
-            cb(new Error('存储路径有问题'))
-            // cb(null, chunkAddress)
-        // } catch (err) {
-        //     cb('存储路径有问题')
-        // }
-        
+            cb(null, chunkAddress)
+            // throw new Error('存储路径有问题')
+        } catch (err) {
+            cb(err)
+        }
     },
     filename: (req, file, cb) => {
         const fileOriginalname = Buffer.from(req.file.originalname, 'latin1').toString('utf-8');

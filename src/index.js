@@ -64,11 +64,9 @@ app.use('/static', express.static(path.join(__dirname, '../files')))
 
 // 全局错误处理中间件（需将错误抛出才捕获的到）
 app.use((err, req, res, next) => {
-    console.error("捕获到错误:", err.stack);
-    //   res.status(500).send("服务器内部错误");
     res.send(Result.error({
         message: '服务器内部错误',
-        reason: err.stack
+        reason: err.message
     }))
 })
 
