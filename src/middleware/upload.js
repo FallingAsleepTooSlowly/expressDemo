@@ -47,7 +47,6 @@ const theStorage = multer.diskStorage({
                 失败时的写法：cb(new Error('Invalid path'))
     */
     destination: (req, file, cb) => {
-        console.log('theStoragetheStorage===>', req.body)
         // 决定保存的路径
         // cb(null, urlDefinePath(req.url))
         cb(null, './files/portrait')
@@ -215,7 +214,6 @@ const customizedStorage = {
         multer.diskStorage({
             // 设置存储路径，只有路径的话可直接简写为 destination: 'uploads/'
             destination: (req, file, cb) => {
-                console.log('diskStorage===>', file)
                 // 确保目录存在，如果目录结构不存在，它将由该函数创建
                 fs.ensureDirSync(folderDefinePath(req.body.id))
                 // 决定保存的路径
@@ -235,7 +233,6 @@ const customizedStorage = {
      // 可选方法用于删除已存储的文件，通常在处理过程中发生错误时由 Multer 自动调用
     _removeFile(req, file, cb) {
         // 进来时说明已报错，判断是否是磁盘文件
-        console.log('_removeFile_removeFile===>', file)
         if (file.path) {
             // 删除磁盘文件
             fs.unlink(file.path, cb); 
@@ -288,11 +285,8 @@ const chunkFileStorage = multer.diskStorage({
                 当请求中包含文件时，Express 通常使用`multipart/form-data`格式。处理这种格式的中间件（如`multer`）可能会在错误发生时直接中断连接，
                 导致连接重置，而不是进入错误处理中间件，所以若 destination 或 filename 里报错的话，连接会重置，前端获取不到任何返回数据
            */
-            console.log('filefilefile====>', file)
-            console.log('req.body====>', req.body)
             // 解决中文乱码问题
             const fileOriginalname = Buffer.from(file.originalname, 'latin1').toString('utf-8');
-            console.log('fileOriginalname=====>', fileOriginalname)
             let [fname, index, ext] = fileOriginalname.split(".")
             // 临时保存路径
             const chunkAddress = tempPath + '/' + fname
@@ -306,7 +300,7 @@ const chunkFileStorage = multer.diskStorage({
     },
     filename: (req, file, cb) => {
         try {
-            const fileOriginalname = Buffer.from(req.file.originalname, 'latin1').toString('utf-8');
+            const fileOriginalname = Buffer.from(file.originalname, 'latin1').toString('utf-8');
             let [fname, index, ext] = fileOriginalname.split(".")
             // 因为是分片文件，所以按照索引命名，且不添加扩展名，等合并后再添加扩展名
             const fileName = index

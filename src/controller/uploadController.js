@@ -5,6 +5,7 @@ const uploadController = require("express").Router()
 const jwt = require("../common/utils/jwt")
 // fs-extra 是 fs 的扩展
 const fs = require("fs-extra")
+const path = require("path")
 const { customizedStorage, diskUploadFile, chunkFileUpload, tempPath, folderDefinePath } = require("../middleware/upload")
 const Result = require("../common/config/result")
 const uploadService = require("../service/uploadService")
@@ -18,7 +19,6 @@ axios.defaults.headers.post['Content-Type'] = 'application/json'        // 设�
 
 // 每个对路由 '/upload' 的请求都会经过这里
 uploadController.all("/upload/*", jwt.verify(), (req, res, next) => {
-    console.log('is in upload')
     next()
 })
 
@@ -40,7 +40,6 @@ uploadController.post("/upload/uploadFile", multer({ storage: customizedStorage 
 
 // 上传单一文件接口
 uploadController.post("/upload/uploadSingleFile", diskUploadFile.single('file'), async (req, res, next) => {
-    console.log('uploadSingleFile==>', req.body)
     try {
         res.send(Result.success({
             code: 0,
@@ -68,7 +67,7 @@ uploadController.post("/upload/uploadChunkFile", async (req, res, next) => {
     try {
         chunkFileUpload.single('file')(req, res, (err) => {
             if (err) {
-                throw new Error(err)
+                next(err)
             } else {
                 res.send(Result.success({
                     code: 0,
@@ -84,7 +83,6 @@ uploadController.post("/upload/uploadChunkFile", async (req, res, next) => {
 // 合并分段上传的文件内
 uploadController.post("/upload/mergeChunkFile", chunkFileUpload.none(), async (req, res, next) => {
     try {
-        console.log('mergeChunkFile===>', req.body)
         // 包含扩展的文件名，也是合并后的文件名
         let reqName = req.body.name
         // 获取到不包含扩展的文件名
@@ -106,7 +104,7 @@ uploadController.post("/upload/mergeChunkFile", chunkFileUpload.none(), async (r
         })
 
         // 合并完文件后删除临时文件夹
-        fse.removeSync(chunkDir)
+        fs.removeSync(chunkDir)
         res.send(Result.success({
             code: 0,
             data: '文件上传成功'
