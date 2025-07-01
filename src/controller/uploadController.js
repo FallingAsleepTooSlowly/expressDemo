@@ -5,7 +5,7 @@ const uploadController = require("express").Router()
 const jwt = require("../common/utils/jwt")
 // fs-extra 是 fs 的扩展
 const fs = require("fs-extra")
-const { memoryUploadFile, customizedStorage, diskUploadFile, chunkFileUpload } = require("../middleware/upload")
+const { customizedStorage, diskUploadFile, chunkFileUpload, tempPath, folderDefinePath } = require("../middleware/upload")
 const Result = require("../common/config/result")
 const uploadService = require("../service/uploadService")
 const { port } = require("../common/config/constant")
@@ -65,7 +65,6 @@ uploadController.post("/upload/uploadMultipleFiles", diskUploadFile.array('file'
 
 // 分段上传文件接口
 uploadController.post("/upload/uploadChunkFile", async (req, res, next) => {
-    console.log('uploadCh2222unkFile==>', req.body)
     try {
         chunkFileUpload.single('file')(req, res, (err) => {
             if (err) {
@@ -77,6 +76,41 @@ uploadController.post("/upload/uploadChunkFile", async (req, res, next) => {
                 }))
             }
         })
+    } catch (err) {
+        next(err)
+    }
+})
+
+// 合并分段上传的文件内
+uploadController.post("/upload/mergeChunkFile", chunkFileUpload.none(), async (req, res, next) => {
+    try {
+        console.log('mergeChunkFile===>', req.body)
+        // 包含扩展的文件名，也是合并后的文件名
+        let reqName = req.body.name
+        // 获取到不包含扩展的文件名
+        let fname = req.body.name.split('.')[0]
+        // 获取到分段文件的路径，path.join() 用于合并成一个可使用的新路径，斜杠或改成需要的反斜杠？
+        let chunkDir = path.join(tempPath, fname)
+
+        // 获取指定目录里的文件，这里使用同步读取方法以防文件合并顺序混乱
+        let chunks = fs.readdirSync(chunkDir)
+        // 对数组的元素进行排序，然后再按顺序逐一处理，这里用的是文件夹默认的升序，即递增
+        chunks.sort((a, b) => a - b).map(chunkName => {
+            // 用于将数据添加到指定文件中
+            fs.appendFileSync(
+                // 指定的文件，即合并后的文件
+                path.join(folderDefinePath(req.body.id), reqName),
+                // 用于读取文件并返回其内容，这里是添加的数据，即每一块的文件
+                fs.readFileSync(`${chunkDir}/${chunkName}`)
+            )
+        })
+
+        // 合并完文件后删除临时文件夹
+        fse.removeSync(chunkDir)
+        res.send(Result.success({
+            code: 0,
+            data: '文件上传成功'
+        }))
     } catch (err) {
         next(err)
     }

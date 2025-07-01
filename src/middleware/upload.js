@@ -111,7 +111,7 @@ function elseUploadPortrait (req, res, next) {
         接收一切上传的文件
 
         multer({dest:"attachment/"}).none();
-        接收只有文本域的表单，如果上传任何文件，会返回 “LIMIT_UNEXPECTED_FILE” 错误。
+        接收只有文本域的表单，即只处理非文件的数据，如果上传任何文件，会返回 “LIMIT_UNEXPECTED_FILE” 错误。
 
         上述使用方式中 options 的配置项有：
         dest 或 storage：在哪里存储文件（如果忽略该选项，文件会被保存在内存中，并且永远不会写入硬盘中）
@@ -256,7 +256,11 @@ const customizedStorage = {
     sort() 方法用于对数组的元素进行排序，并返回数组，默认排序顺序是根据字符串 Unicode 码点，即字符编码的顺序
         升序：array.sort(function(a, b) { return a - b })
         降序：array.sort(function(a, b) { return b - a })
-
+    fs.readdirSync(path, options) 方法用于同步读取给定目录的内容。该方法返回一个数组，其中包含目录中的所有文件名或对象。
+        path: 必须从中读取内容的目录路径。它可以是字符串，缓冲区或URL
+        options: 用于指定将影响方法的可选参数
+            encoding: 指定的编码
+            withFileTypes: 指定是否将文件作为fs.Dirent对象返回。默认值为“ false”
     fs.appendFileSync(filepath, data, options) 用于将数据同步添加到文件
         filepath: 字符串，用于指定文件路径
         data: 附加到文件的内容
@@ -285,6 +289,7 @@ const chunkFileStorage = multer.diskStorage({
                 导致连接重置，而不是进入错误处理中间件，所以若 destination 或 filename 里报错的话，连接会重置，前端获取不到任何返回数据
            */
             console.log('filefilefile====>', file)
+            console.log('req.body====>', req.body)
             // 解决中文乱码问题
             const fileOriginalname = Buffer.from(file.originalname, 'latin1').toString('utf-8');
             console.log('fileOriginalname=====>', fileOriginalname)
@@ -300,12 +305,16 @@ const chunkFileStorage = multer.diskStorage({
         }
     },
     filename: (req, file, cb) => {
-        const fileOriginalname = Buffer.from(req.file.originalname, 'latin1').toString('utf-8');
-        let [fname, index, ext] = fileOriginalname.split(".")
-        // 因为是分片文件，所以按照索引命名，且不添加扩展名，等合并后再添加扩展名
-        const fileName = index
-        cb(null, fileName)
-        // cb(null, `${name}-${Date.now()}${ext}`)
+        try {
+            const fileOriginalname = Buffer.from(req.file.originalname, 'latin1').toString('utf-8');
+            let [fname, index, ext] = fileOriginalname.split(".")
+            // 因为是分片文件，所以按照索引命名，且不添加扩展名，等合并后再添加扩展名
+            const fileName = index
+            cb(null, fileName)
+            // cb(null, `${name}-${Date.now()}${ext}`)
+        } catch (err) {
+            cb(err)
+        }
     }
 })
 const chunkFileUpload = multer({ storage: chunkFileStorage })
@@ -317,5 +326,7 @@ module.exports = {
     diskUploadFile,
     customizedStorage,
     chunkFileUpload,
-    urlDefinePath
+    tempPath,
+    urlDefinePath,
+    folderDefinePath
 }
