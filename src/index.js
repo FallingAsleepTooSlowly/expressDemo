@@ -4,6 +4,9 @@ const app = require("express")()
 const cors = require("cors")  // 引入cors模块
 const Result = require("./common/config/result")
 const path = require('path')
+// token 生成和校验
+const jwt = require("./common/utils/jwt")
+const { staticMiddleware } = require("./middleware/index")
 
 // ------------------ 验证码相关
 // svg-captcha 验证码插件依赖 session 存储验证码信息，session 的认证机制依赖 cookie
@@ -59,7 +62,8 @@ app.use(require("./common/utils/morgan"))
 app.use("/", require("./controller"))
 
 // 静态文件访问路径设置
-app.use('/static', express.static(path.join(__dirname, '../files')))
+// app.use('/static', jwt.verify(), express.static(path.join(__dirname, '../files')))
+app.use('/static', staticMiddleware, express.static(path.join(__dirname, '../files')))
 
 
 // 全局错误处理中间件（需将错误抛出才捕获的到）
