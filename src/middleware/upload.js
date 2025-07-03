@@ -13,14 +13,8 @@
 
 // multer 用于将本地文件/图片上传到服务器指定目录
 const multer = require("multer")
-const Result = require("../common/config/result")
 const path = require("path")
 const fs = require("fs-extra")
-
-// ------------------------------ 文件上传路径
-
-// 分段存储的绝对路径
-const tempPath = 'files/temp'
 
 // ------------------------------ 普通文件上传方法
 
@@ -37,7 +31,7 @@ const theStorage = multer.diskStorage({
     */
     destination: (req, file, cb) => {
         // 决定保存的路径
-        cb(null, path.join(global.ROOT_PATH, 'files/portrait'))
+        cb(null, path.join(global.ROOT_PATH_FILES, 'portrait'))
     },
     // 设置存储的文件名
     /*
@@ -167,7 +161,7 @@ const diskStorage = multer.diskStorage({
     destination: (req, file, cb) => {
         // cb(new Error('Invalid path'))
         // 决定保存的路径
-        cb(null, path.join(global.ROOT_PATH, 'files', req.body.id ))
+        cb(null, path.join(global.ROOT_PATH_FILES, req.body.id ))
     },
     filename: (req, file, cb) => {
         // 获取到文件的扩展名，如 .jpg
@@ -202,7 +196,7 @@ const customizedStorage = {
         multer.diskStorage({
             // 设置存储路径，只有路径的话可直接简写为 destination: 'uploads/'
             destination: (req, file, cb) => {
-                const filePath = path.join(global.ROOT_PATH, req.body.id)
+                const filePath = path.join(global.ROOT_PATH_FILES, req.body.id)
                 // 确保目录存在，如果目录结构不存在，它将由该函数创建
                 fs.ensureDirSync(filePath)
                 // 决定保存的路径
@@ -278,7 +272,7 @@ const chunkFileStorage = multer.diskStorage({
             const fileOriginalname = Buffer.from(file.originalname, 'latin1').toString('utf-8');
             let [fname, index, ext] = fileOriginalname.split(".")
             // 临时保存路径
-            const chunkAddress = path.join(global.ROOT_PATH, tempPath, fname )
+            const chunkAddress = path.join(global.ROOT_PATH_TEMP, fname )
             // 确保路径存在，不存在会自动创建
             fs.ensureDirSync(chunkAddress)
             cb(null, chunkAddress)
@@ -308,6 +302,5 @@ module.exports = {
     memoryUploadFile,
     diskUploadFile,
     customizedStorage,
-    chunkFileUpload,
-    tempPath
+    chunkFileUpload
 }

@@ -1,6 +1,6 @@
 /* 自定义的常量文件 */
 
-// 
+// 静态文件访问白名单地址
 function staticWhitelist (referer) {
     const list = [
         'http://localhost:9999/'

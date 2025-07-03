@@ -21,6 +21,11 @@ process.on('uncaughtException', (err) => {
 
 // 将根目录直接添加在全局变量中
 global.ROOT_PATH = path.resolve(__dirname)
+// 将带 files 文件夹的目录添加在全局变量中
+global.ROOT_PATH_FILES = path.resolve(__dirname, 'files')
+// 将临时文件夹的目录添加在全局变量中
+global.ROOT_PATH_TEMP = path.resolve(__dirname, 'files/temp')
+
 
 app.listen(port, () => {
     // console.timeEnd(`Service http://localhost:${port} Start Time`);
