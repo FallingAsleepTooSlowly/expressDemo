@@ -15,6 +15,7 @@ function sign(option) {
 
 // token 校验
 let verify = (isAdmin) => (req, res, next) => {
+    // 判断是否在 token 校验的白名单内
     if (jwtWhiteList(req.url)) {
         next()
     } else {

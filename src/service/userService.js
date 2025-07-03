@@ -78,7 +78,7 @@ class userService {
     async uploadPortrait (condition, req) {
         let info = await userDao.uploadPortrait(condition)
         if (info.updateResult) {
-            const oldFile = './files/portrait/' + info.oldUserInfo.portrait
+            const oldFile = path.join(global.ROOT_PATH, 'files/portrait', info.oldUserInfo.portrait )
             // fs.unlink(<要删除的文件路径>, <失败后的回调函数>)
             fs.unlink(oldFile, (err) => {
                 if (err) console.error('删除文件失败', err);

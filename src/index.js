@@ -4,8 +4,6 @@ const app = require("express")()
 const cors = require("cors")  // 引入cors模块
 const Result = require("./common/config/result")
 const path = require('path')
-// token 生成和校验
-const jwt = require("./common/utils/jwt")
 const { staticMiddleware } = require("./middleware/index")
 
 // ------------------ 验证码相关
@@ -62,7 +60,6 @@ app.use(require("./common/utils/morgan"))
 app.use("/", require("./controller"))
 
 // 静态文件访问路径设置
-// app.use('/static', jwt.verify(), express.static(path.join(__dirname, '../files')))
 app.use('/static', staticMiddleware, express.static(path.join(__dirname, '../files')))
 
 

@@ -19,19 +19,8 @@ const fs = require("fs-extra")
 
 // ------------------------------ 文件上传路径
 
-// 根据获取存储的绝对路径
-function urlDefinePath (url) {
-    const path = {
-        '/user/uploadPortrait': './files/portrait'
-    }
-    return path[url]
-}
-// 根据文件夹名获取存储路径
-function folderDefinePath (folder) {
-    return './files/' + folder
-}
 // 分段存储的绝对路径
-const tempPath = './files/temp'
+const tempPath = 'files/temp'
 
 // ------------------------------ 普通文件上传方法
 
@@ -48,8 +37,7 @@ const theStorage = multer.diskStorage({
     */
     destination: (req, file, cb) => {
         // 决定保存的路径
-        // cb(null, urlDefinePath(req.url))
-        cb(null, './files/portrait')
+        cb(null, path.join(global.ROOT_PATH, 'files/portrait'))
     },
     // 设置存储的文件名
     /*
@@ -179,7 +167,7 @@ const diskStorage = multer.diskStorage({
     destination: (req, file, cb) => {
         // cb(new Error('Invalid path'))
         // 决定保存的路径
-        cb(null, folderDefinePath(req.body.id))
+        cb(null, path.join(global.ROOT_PATH, 'files', req.body.id ))
     },
     filename: (req, file, cb) => {
         // 获取到文件的扩展名，如 .jpg
@@ -214,10 +202,11 @@ const customizedStorage = {
         multer.diskStorage({
             // 设置存储路径，只有路径的话可直接简写为 destination: 'uploads/'
             destination: (req, file, cb) => {
+                const filePath = path.join(global.ROOT_PATH, req.body.id)
                 // 确保目录存在，如果目录结构不存在，它将由该函数创建
-                fs.ensureDirSync(folderDefinePath(req.body.id))
+                fs.ensureDirSync(filePath)
                 // 决定保存的路径
-                cb(null, folderDefinePath(req.body.id))
+                cb(null, filePath)
             },
             // 设置存储的文件名，只有文件名可直接简写为 filename: (req, file, cb) => cb(null, `${Date.now()}-${file.originalname}`)
             filename: (req, file, cb) => {
@@ -289,7 +278,7 @@ const chunkFileStorage = multer.diskStorage({
             const fileOriginalname = Buffer.from(file.originalname, 'latin1').toString('utf-8');
             let [fname, index, ext] = fileOriginalname.split(".")
             // 临时保存路径
-            const chunkAddress = tempPath + '/' + fname
+            const chunkAddress = path.join(global.ROOT_PATH, tempPath, fname )
             // 确保路径存在，不存在会自动创建
             fs.ensureDirSync(chunkAddress)
             cb(null, chunkAddress)
@@ -320,7 +309,5 @@ module.exports = {
     diskUploadFile,
     customizedStorage,
     chunkFileUpload,
-    tempPath,
-    urlDefinePath,
-    folderDefinePath
+    tempPath
 }
