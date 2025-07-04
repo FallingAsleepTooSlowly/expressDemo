@@ -2,6 +2,7 @@
 const fs = require("fs-extra")
 const path = require("path")
 const Result = require("../common/config/result")
+const uploadDao = require("../dao/uploadDao")
 
 class uploadService {
     // 上传文件
@@ -19,9 +20,9 @@ class uploadService {
     // 将分段上传的文件合并
     async mergeChunkFile (condition, req) {
         // 包含扩展的文件名，也是合并后的文件名
-        let reqName = req.body.name
+        let reqName = req.body.fileName
         // 获取到不包含扩展的文件名
-        let fname = req.body.name.split('.')[0]
+        let fname = req.body.fileName.split('.')[0]
         // 获取到分段文件的路径，path.join() 用于合并成一个可使用的新路径，斜杠或改成需要的反斜杠？
         let chunkDir = path.join(global.ROOT_PATH_TEMP, fname)
 
@@ -40,10 +41,23 @@ class uploadService {
 
         // 合并完文件后删除临时文件夹
         fs.removeSync(chunkDir)
-        return Result.success({
-            code: 0,
-            data: '文件上传成功'
-        })
+
+        // 获取需要存储的数据
+        condition.filePath = path.join(req.body.id, reqName)
+        // 将保存的文件记录存储在数据库中
+        let info = await uploadDao.saveUserFiles(condition)
+        console.log('mergeChunkFileService=====>', info)
+        if (info) {
+            return Result.success({
+                code: 0,
+                message: '文件上传成功'
+            })
+        } else {
+            return Result.success({
+                code: 1,
+                message: '文件上传失败'
+            })
+        }
     }
 }
 
