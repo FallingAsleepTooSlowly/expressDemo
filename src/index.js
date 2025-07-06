@@ -65,7 +65,7 @@ app.use('/static', staticMiddleware, express.static(path.join(__dirname, '../fil
 
 // 全局错误处理中间件（需将错误抛出才捕获的到）
 app.use((err, req, res, next) => {
-    console.log('全局错误处理====>', err.message)
+    console.log('全局错误处理====>', err)
     res.send(Result.error({
         message: '服务器内部错误',
         reason: err.message

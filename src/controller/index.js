@@ -3,6 +3,6 @@ const router = require("express").Router()
 
 // router.use("/user", require("./userController"))
 router.use(require("./userController"))
-router.use(require("./uploadController"))
+router.use(require("./filesController"))
 
 module.exports = router

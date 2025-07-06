@@ -168,11 +168,15 @@ const diskStorage = multer.diskStorage({
         const ext = path.extname(file.originalname)
         if (req.body.id) {
             const fileName = `${req.body.id}-${Date.now()}${ext}`
-            req.body.file = fileName
+            // 获取到需要存储的文件名和文件存储路径
+            req.body.fileName = fileName
+            req.body.filePath = path.join(req.body.id, fileName)
             cb(null, fileName)
         } else {
             const fileName = `${Date.now()}${ext}`
-            req.body.file = fileName
+             // 获取到需要存储的文件名和文件存储路径
+            req.body.fileName = fileName
+            req.body.filePath = path.join(req.body.id, fileName)
             cb(null, fileName)
         }
         // cb(null, `${name}-${Date.now()}${ext}`)
