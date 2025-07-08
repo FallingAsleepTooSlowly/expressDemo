@@ -30,8 +30,10 @@ const theStorage = multer.diskStorage({
                 失败时的写法：cb(new Error('Invalid path'))
     */
     destination: (req, file, cb) => {
+        const filePath = path.join(global.ROOT_PATH_FILES, 'portrait')
+        fs.ensureDirSync(filePath)
         // 决定保存的路径
-        cb(null, path.join(global.ROOT_PATH_FILES, 'portrait'))
+        cb(null, filePath)
     },
     // 设置存储的文件名
     /*
