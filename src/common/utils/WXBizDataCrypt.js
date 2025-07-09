@@ -1,6 +1,6 @@
 /* 解密微信小程序数据 */
 // rypto模块的目的是为了提供通用的加密和哈希算法
-var crypto = require('crypto')
+import crypto from "crypto"
 
 function WXBizDataCrypt(appId, sessionKey) {
   this.appId = appId
@@ -34,4 +34,4 @@ WXBizDataCrypt.prototype.decryptData = function (encryptedData, iv) {
   return decoded
 }
 
-module.exports = WXBizDataCrypt
+export default WXBizDataCrypt

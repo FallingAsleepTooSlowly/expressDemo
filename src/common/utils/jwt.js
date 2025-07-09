@@ -1,11 +1,11 @@
 /* 使用 jsonwebtoken 生成 token */
 
-const jwt = require('jsonwebtoken')
-const Result = require("../config/result")
-const { jwtWhiteList } = require("./util")
+import jwt from "jsonwebtoken"
+import Result from "../config/result.js"
+import { jwtWhiteList } from "./util.js"
 
 // sign 用于生成 token，666 用于加密的私钥可以自行定义
-function sign(option) {
+export function sign(option) {
     // 参数：sign(<用于加密的信息>, <加密口令（解密时需要）>, <加密的参数>)
     return jwt.sign(option, 'danbao', {
         // 过期时间，单位为秒，此处设置的是12小时
@@ -14,7 +14,7 @@ function sign(option) {
 }
 
 // token 校验
-let verify = (isAdmin) => (req, res, next) => {
+export let verify = (isAdmin) => (req, res, next) => {
     // 判断是否在 token 校验的白名单内
     if (jwtWhiteList(req.url)) {
         next()
@@ -54,9 +54,4 @@ let verify = (isAdmin) => (req, res, next) => {
             }))
         }
     }
-}
-
-module.exports = {
-    sign,
-    verify
 }

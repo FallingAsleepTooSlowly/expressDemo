@@ -1,7 +1,11 @@
 /* 自定义的常量文件 */
 
+
+// 端口号
+export const port = 9000
+
 // 静态文件访问白名单地址
-function staticWhitelist (referer) {
+export function staticWhitelist (referer) {
     const list = [
         'http://localhost:9999/'
     ]
@@ -12,9 +16,3 @@ function staticWhitelist (referer) {
         return false
     }
 }
-
-module.exports = {
-    // 端口号
-    port: 9000,
-    staticWhitelist
-} 

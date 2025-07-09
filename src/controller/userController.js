@@ -1,27 +1,28 @@
 /* 用户信息相关接口 */
 
-const userController = require("express").Router()
-const userService = require("../service/userService")
+import express from "express"
+import userService from "../service/userService.js"
 // token 生成和校验
-const jwt = require("../common/utils/jwt")
-// const userclass = require("../class/userClass")
-const Result = require("../common/config/result")
+import { verify } from "../common/utils/jwt.js"
+import Result from "../common/config/result.js"
 // 生成验证码
-const svgCaptcha = require("svg-captcha")
+import svgCaptcha from "svg-captcha"
 // multer 用于将本地文件/图片上传到服务器指定目录
-const multer = require("multer")
+import multer from "multer"
 // 微信小程序数据解密方法（未使用或是已舍弃）
-const WXBizDataCrypt = require("../common/utils/WXBizDataCrypt")
-const { uploadPortrait } = require("../middleware/upload")
-const md5 = require("md5-node")
-const axios = require("axios")
+import WXBizDataCrypt from "../common/utils/WXBizDataCrypt.js"
+import { uploadPortrait } from "../middleware/upload.js"
+import md5 from "md5-node"
+import axios from "axios"
+
+const userController = express.Router()
 
 // 单独配置一些默认参数
 axios.defaults.timeout = 10000      // 设置超时时间为10秒
 axios.defaults.headers.post['Content-Type'] = 'application/json'        // 设置请求头为 json 格式
 
 // 每个对路由 '/user' 的请求都会经过这里
-userController.all('/user/*', jwt.verify(), (req, res, next) => {
+userController.all('/user/*', verify(), (req, res, next) => {
     next()
 })
 
@@ -62,7 +63,7 @@ userController.post("/user/uploadPortrait", uploadPortrait.single("file"), async
 
 // 校验 token 接口
 // 在回调函数前加入校验 token 的方法
-userController.get("/user/checkToken", jwt.verify(), async (req, res) => {
+userController.get("/user/checkToken", verify(), async (req, res) => {
     res.send(Result.success({
         code: 0,
         data: '校验接口'
@@ -126,4 +127,4 @@ userController.post("/jscode2session", async (req, res) => {
         })
 })
 
-module.exports = userController
+export default userController

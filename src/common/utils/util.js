@@ -1,5 +1,5 @@
 // 上传文件的自定义中间件
-function jwtWhiteList (url) {
+export function jwtWhiteList (url) {
     const whiteList = [
         '/user/getSvg',
         '/user/login'
@@ -9,8 +9,4 @@ function jwtWhiteList (url) {
     } else {
         return false
     }
-}
-
-module.exports = {
-    jwtWhiteList
 }

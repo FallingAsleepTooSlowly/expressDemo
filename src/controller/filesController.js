@@ -1,21 +1,23 @@
 /* 上传文件相关接口 */
 
-const uploadController = require("express").Router()
+import express from "express"
 // token 生成和校验
-const jwt = require("../common/utils/jwt")
-const { customizedStorage, diskUploadFile, chunkFileUpload } = require("../middleware/upload")
-const Result = require("../common/config/result")
-const filesService = require("../service/filesService")
-const { port } = require("../common/config/constant")
-const multer = require("multer")
-const axios = require("axios")
+import { verify } from "../common/utils/jwt.js"
+import { customizedStorage, diskUploadFile, chunkFileUpload } from "../middleware/upload.js"
+import Result from "../common/config/result.js"
+import filesService from "../service/filesService.js"
+import { port } from "../common/config/constant.js"
+import multer from "multer"
+import axios from "axios"
+
+const uploadController = express.Router()
 
 // 单独配置一些默认参数
 axios.defaults.timeout = 10000      // 设置超时时间为10秒
 axios.defaults.headers.post['Content-Type'] = 'application/json'        // 设置请求头为 json 格式
 
 // 每个对路由 '/upload' 的请求都会经过这里
-uploadController.all("/files/*", jwt.verify(), (req, res, next) => {
+uploadController.all("/files/*", verify(), (req, res, next) => {
     next()
 })
 
@@ -82,4 +84,4 @@ uploadController.post("/files/mergeChunkFile", chunkFileUpload.none(), async (re
     }
 })
 
-module.exports = uploadController
+export default uploadController

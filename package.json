@@ -2,6 +2,7 @@
   "name": "expressdemo",
   "version": "0.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "start": "node app",
     "devstart": "nodemon app"
@@ -27,5 +28,8 @@
   },
   "devDependencies": {
     "nodemon": "^3.1.9"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }

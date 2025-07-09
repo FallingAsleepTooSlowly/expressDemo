@@ -1,10 +1,10 @@
-const userDao = require("../dao/userDao")
-const { UserInfoDto } = require("../dto/userInfo.dto")
+import userDao from "../dao/userDao.js"
+import { UserInfoDto } from "../dto/userInfo.dto.js"
 // token 生成和校验
-const jwt = require("../common/utils/jwt")
-const Result = require("../common/config/result")
-const path = require("path")
-const fs = require('fs')
+import { sign } from "../common/utils/jwt.js"
+import Result from "../common/config/result.js"
+import path from "path"
+import fs from 'fs'
 
 class userService {
     // 登陆
@@ -42,7 +42,7 @@ class userService {
             // let userInfo = new userInfoDto(info)
             userInfo = UserInfoDto.fromDataBase(info)
             // 生成 token
-            let jwtToken = jwt.sign({name: userInfo.name, openid: userInfo.openid})
+            let jwtToken = sign({name: userInfo.name, openid: userInfo.openid})
             apiRes = Result.success({
                 code: 0,
                 data: userInfo,
@@ -96,4 +96,4 @@ class userService {
     }
 }
 
-module.exports = new userService()
+export default new userService()

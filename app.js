@@ -1,7 +1,12 @@
 /* 此文件用于启用，启动方式为 nodemon app */
-const app = require("./src")
-const { port } = require("./src/common/config/constant")
-const path = require('path')
+import app from "./src/index.js"
+import { port } from "./src/common/config/constant.js"
+import path from "path"
+import { fileURLToPath } from 'url'
+import { dirname } from 'path'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
 
 // 记录启动速度
 // console.time(`Service http://localhost:${port} Start Time`);

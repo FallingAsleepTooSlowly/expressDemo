@@ -5,19 +5,18 @@
 
 // 使用 mysql2 + knex 时配置
 // 安装依赖的命令为 npm install knex mysql2
-module.exports = {
-    MySQLConfig: {
-        client: "mysql2",
-        connection: {
-            host: "localhost",
-            user: "root",
-            password: "310627",
-            database: "gh_demo",
-        },
-        pool: {
-            // 连接池配置
-            min: 0,
-            max: 10,
-        },
+const MySQLConfig = {
+    client: "mysql2",
+    connection: {
+        host: "localhost",
+        user: "root",
+        password: "310627",
+        database: "gh_demo",
+    },
+    pool: {
+        // 连接池配置
+        min: 0,
+        max: 10,
     },
 }
+export default MySQLConfig

@@ -1,7 +1,7 @@
 /* 上传文件相关数据库操作 */
 
 // 通过 mysql2 来使用数据库
-const protoDB = require("../common/utils/protoDbConnet")
+import protoDB from "../common/utils/protoDbConnet.js"
 
 class filesDao {
     // 保存用户上传的文件
@@ -16,4 +16,4 @@ class filesDao {
     }
 }
 
-module.exports = new filesDao()
+export default new filesDao()

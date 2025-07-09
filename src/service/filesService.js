@@ -1,8 +1,8 @@
 // fs-extra 是 fs 的扩展
-const fs = require("fs-extra")
-const path = require("path")
-const Result = require("../common/config/result")
-const filesDao = require("../dao/filesDao")
+import fs from "fs-extra"
+import path from "path"
+import Result from "../common/config/result.js"
+import filesDao from "../dao/filesDao.js"
 
 class uploadService {
     // 上传文件
@@ -102,4 +102,4 @@ class uploadService {
     }
 }
 
-module.exports = new uploadService()
+export default new uploadService()

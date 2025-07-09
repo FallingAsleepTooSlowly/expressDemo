@@ -1,8 +1,12 @@
 /* 此文件用于导入所有的路由 */
-const router = require("express").Router()
+import express from "express"
+import userController from "./userController.js"
+import filesController from "./filesController.js"
 
-// router.use("/user", require("./userController"))
-router.use(require("./userController"))
-router.use(require("./filesController"))
+const router = express.Router()
 
-module.exports = router
+// router.use("/user", userController)
+router.use(userController)
+router.use(filesController)
+
+export default router

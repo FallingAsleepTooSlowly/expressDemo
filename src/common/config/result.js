@@ -1,4 +1,6 @@
 /* 封装返回处理好的数据 */
+import _ from "lodash"
+
 class Result {
     // 定义一个构造函数
     constructor (data) {
@@ -8,7 +10,6 @@ class Result {
         // this.token = data.token
 
         // 使用 lodash 的 pick 函数筛选想要的字段，再用 Object.assign 将对象中所有可枚举的自有属性复制出来
-        var _ = require('lodash')
         const needFields = ['code', 'message', 'data', 'token', 'reason']
         Object.assign(this, _.pick(data, needFields))
     }
@@ -48,4 +49,4 @@ class Result {
     }
 }
 
-module.exports = Result
+export default Result

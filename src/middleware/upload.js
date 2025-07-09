@@ -12,9 +12,9 @@
 */
 
 // multer 用于将本地文件/图片上传到服务器指定目录
-const multer = require("multer")
-const path = require("path")
-const fs = require("fs-extra")
+import multer from "multer"
+import path from "path"
+import fs from "fs-extra"
 
 // ------------------------------ 普通文件上传方法
 
@@ -68,7 +68,7 @@ const theStorage = multer.diskStorage({
 
 // 上传头像的自定义中间件，使用storage 代替 dest 后，Multer 会将存储引擎由 DiskStorage (硬盘存储)切换为 MemoryStorage (内存存储)
 // 使用 storage 可以对上传文件做更多的控制，这里的 storage 中我们使用 diskStorage，所以依旧是硬盘存储
-const uploadPortrait = multer({ storage: theStorage })
+export const uploadPortrait = multer({ storage: theStorage })
 
 // 上传头像的自定义中间件，不使用 diskStorage 的写法
 function elseUploadPortrait (req, res, next) {
@@ -134,7 +134,7 @@ function elseUploadPortrait (req, res, next) {
                 1）磁盘存储：使用 fs 模块操作 req.file.path
                 2）内存存储：直接访问 req.file.buffer
             3. 如何删除上传的文件：
-                const fs = require('fs');
+                import fs = from "fs"
                 fs.unlink(req.file.path, (err) => {
                     if (err) console.error('删除文件失败', err);
                 });
@@ -156,7 +156,7 @@ function elseUploadPortrait (req, res, next) {
 
 // 使用 memoryStorage 内存存储，避免直接写入磁盘
 const memoryStorage = multer.memoryStorage()
-const memoryUploadFile = multer({ storage: memoryStorage })
+export const memoryUploadFile = multer({ storage: memoryStorage })
 
 // 使用 diskStorage 磁盘存储，直接写入磁盘
 const diskStorage = multer.diskStorage({
@@ -184,12 +184,12 @@ const diskStorage = multer.diskStorage({
         // cb(null, `${name}-${Date.now()}${ext}`)
     }
 })
-const diskUploadFile = multer({ storage: diskStorage })
+export const diskUploadFile = multer({ storage: diskStorage })
 
 // ------------------------------ Multer 自定义存储引擎
 
 // 自定义的存储引擎
-const customizedStorage = {
+export const customizedStorage = {
     // 处理文件存储逻辑
     _handleFile(req, file, cb) {
         if (!req.body.id) {
@@ -300,13 +300,4 @@ const chunkFileStorage = multer.diskStorage({
         }
     }
 })
-const chunkFileUpload = multer({ storage: chunkFileStorage })
-
-
-module.exports = {
-    uploadPortrait,
-    memoryUploadFile,
-    diskUploadFile,
-    customizedStorage,
-    chunkFileUpload
-}
+export const chunkFileUpload = multer({ storage: chunkFileStorage })

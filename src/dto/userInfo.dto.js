@@ -1,7 +1,7 @@
-var _ = require('lodash')
+import _ from 'lodash'
 
 // 用户信息类
-class UserInfoDto {
+export class UserInfoDto {
     constructor(user) {
         // 普通方式
         // this.openid = user.openid
@@ -29,7 +29,7 @@ class UserInfoDto {
 
 
 // 分页查询专用 DTO
-class PaginatedUserInfoDto {
+export class PaginatedUserInfoDto {
     constructor(users, pagination) {
         this.item  = UserInfoDto.fromDataBase(users)
         this.pagination = {
@@ -42,8 +42,3 @@ class PaginatedUserInfoDto {
 
 // 使用方式
 // const result = new PaginatedUserResponse(users, pagination)
-
-module.exports = {
-    UserInfoDto,
-    PaginatedUserInfoDto
-}

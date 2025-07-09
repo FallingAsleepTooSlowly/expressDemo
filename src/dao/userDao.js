@@ -1,8 +1,7 @@
 /* 用户相关 */
 
 /* 只通过 mysql2 来使用数据库 */
-const protoDB = require("../common/utils/protoDbConnet")
-// const User = require("../class/crossUserClass")
+import protoDB from "../common/utils/protoDbConnet.js"
 
 class UserDao {
     // 登录
@@ -52,11 +51,11 @@ class UserDao {
     }
 }
 
-module.exports = new UserDao()
+export default new UserDao()
 
 
 /* 通过 mysql2 和 knex 来使用数据库 */
-// const db = require("../common/utils/dbConnet")
+// import db from "../common/utils/dbConnet.js"
 
 // class UserDao {
 //     // 查询所有用户
@@ -90,4 +89,4 @@ module.exports = new UserDao()
 //     }
 // }
 
-// module.exports = new UserDao()
+// export default new UserDao()

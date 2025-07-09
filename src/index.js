@@ -1,15 +1,23 @@
 /* 此文件用于引用 */
-const express = require("express")
-const app = require("express")()
-const cors = require("cors")  // 引入cors模块
-const Result = require("./common/config/result")
-const path = require('path')
-const { staticMiddleware } = require("./middleware/index")
+import express from "express"
+import cors from "cors"  // 引入cors模块
+import Result from "./common/config/result.js"
+import path from 'path'
+import { staticMiddleware } from "./middleware/index.js"
+import { fileURLToPath } from 'url'
+import { dirname } from 'path'
+import morgan from "./common/utils/morgan.js"
+import controller from "./controller/index.js"
 
 // ------------------ 验证码相关
 // svg-captcha 验证码插件依赖 session 存储验证码信息，session 的认证机制依赖 cookie
-const session = require("express-session")
-const cookieParser = require("cookie-parser")
+import session from "express-session"
+import cookieParser from "cookie-parser"
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
+
+const app = express()
 
 app.use(cookieParser())
 // 定义 cookie 解析器，位置需写在路由分配前
@@ -45,7 +53,7 @@ app.use(session({
 *   但在 Express 4.x 以后的版本，body-parser 已经内置于 Express 框架中。
 */ 
 /* 4.x 以前的版本使用 body-parser 解析 post 的写法 */
-// const bodyParser = require("body-parser")
+// import bodyParser from "body-parser"
 // app.use(bodyParser.json(), bodyParser.urlencoded({ extended: true }))   // 解析 post
 
 /* 内置 body-parser 解析 post 的写法 */
@@ -54,10 +62,10 @@ app.use(session({
 app.use(express.json(), express.urlencoded({ extended: true }))   // 解析 post
 
 // 使用日志中间件 morgan 记录请求日志，注意，日志中间件的导入需要在路由前，express 的设计是一层层往下走的，中间件的使用顺序在此比较重要
-app.use(require("./common/utils/morgan"))
+app.use(morgan)
 
 // 路由分离
-app.use("/", require("./controller"))
+app.use("/", controller)
 
 // 静态文件访问路径设置
 app.use('/static', staticMiddleware, express.static(path.join(__dirname, '../files')))
@@ -72,4 +80,4 @@ app.use((err, req, res, next) => {
     }))
 })
 
-module.exports = app
+export default app
