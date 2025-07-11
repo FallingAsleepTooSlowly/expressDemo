@@ -9,7 +9,7 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
 // 记录启动速度
-// console.time(`Service http://localhost:${port} Start Time`);
+console.time(`Service http://localhost:${port} Start Time`);
 
 // ------------------ 备用报错处理方案
 // 处理未捕获的 Promise 拒绝
@@ -33,6 +33,6 @@ global.ROOT_PATH_TEMP = path.resolve(__dirname, 'files/temp')
 
 
 app.listen(port, () => {
-    // console.timeEnd(`Service http://localhost:${port} Start Time`);
+    console.timeEnd(`Service http://localhost:${port} Start Time`);
     console.log(`listening on port ${port}`)
 })
