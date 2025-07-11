@@ -162,8 +162,10 @@ export const memoryUploadFile = multer({ storage: memoryStorage })
 const diskStorage = multer.diskStorage({
     destination: (req, file, cb) => {
         // cb(new Error('Invalid path'))
+        const filePath = path.join(global.ROOT_PATH_FILES, req.body.id )
+        fs.ensureDirSync(filePath)
         // 决定保存的路径
-        cb(null, path.join(global.ROOT_PATH_FILES, req.body.id ))
+        cb(null, filePath)
     },
     filename: (req, file, cb) => {
         // 获取到文件的扩展名，如 .jpg
@@ -197,7 +199,6 @@ export const customizedStorage = {
         }
         // 文件大小超过 40 MB 时判断是大文件
         const MAX_SIZE = 40 * 1024 * 1024
-        console.log('file===>', file)
         
         multer.diskStorage({
             // 设置存储路径，只有路径的话可直接简写为 destination: 'uploads/'
